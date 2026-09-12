@@ -57,7 +57,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   if (!token) return null;
   const userId = readSessionToken(token);
   if (!userId) return null;
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   return user ?? null;
 }
 

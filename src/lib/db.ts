@@ -1,79 +1,69 @@
-import { DatabaseSync } from "node:sqlite";
-import fs from "node:fs";
-import path from "node:path";
 import type { CheckPayload, CheckRecord, CheckStatus } from "./types";
 
-const dataDir = path.join(process.cwd(), "data");
-const dbPath = path.join(dataDir, "secondlook.sqlite");
+type SqliteDb = {
+  exec(sql: string): void;
+  prepare(sql: string): {
+    run(...params: unknown[]): unknown;
+    get(...params: unknown[]): unknown;
+    all(...params: unknown[]): unknown[];
+  };
+};
 
-let db: DatabaseSync | null = null;
+type D1Db = {
+  prepare(sql: string): {
+    bind(...params: unknown[]): {
+      run(): Promise<unknown>;
+      first<T = unknown>(): Promise<T | null>;
+      all<T = unknown>(): Promise<{ results: T[] }>;
+    };
+  };
+  exec(sql: string): Promise<unknown>;
+};
 
-function getDb() {
-  if (db) return db;
+type Store = { kind: "sqlite"; db: SqliteDb } | { kind: "d1"; db: D1Db };
+
+const SCHEMA = `
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS otps (
+  email TEXT PRIMARY KEY,
+  code_hash TEXT NOT NULL,
+  expires_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS checks (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  claim TEXT NOT NULL,
+  status TEXT NOT NULL,
+  payload TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+`;
+
+let sqlite: SqliteDb | null = null;
+
+async function getSqlite(): Promise<SqliteDb> {
+  if (sqlite) return sqlite;
+  const { DatabaseSync } = await import("node:sqlite");
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const dataDir = path.join(process.cwd(), "data");
   fs.mkdirSync(dataDir, { recursive: true });
-  db = new DatabaseSync(dbPath);
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      email TEXT UNIQUE NOT NULL,
-      created_at TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS otps (
-      email TEXT PRIMARY KEY,
-      code_hash TEXT NOT NULL,
-      expires_at INTEGER NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS checks (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL,
-      claim TEXT NOT NULL,
-      status TEXT NOT NULL,
-      payload TEXT NOT NULL,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-  `);
+  const db = new DatabaseSync(path.join(dataDir, "secondlook.sqlite")) as unknown as SqliteDb;
+  db.exec(SCHEMA);
+  sqlite = db;
   return db;
 }
 
-export function upsertUser(id: string, email: string) {
-  const now = new Date().toISOString();
-  getDb().prepare(
-    `INSERT INTO users (id, email, created_at) VALUES (?, ?, ?)
-     ON CONFLICT(email) DO UPDATE SET email=excluded.email`,
-  ).run(id, email.toLowerCase(), now);
-  const row = getDb()
-    .prepare(`SELECT id, email FROM users WHERE email = ?`)
-    .get(email.toLowerCase()) as { id: string; email: string };
-  return row;
+async function getStore(): Promise<Store> {
+  return { kind: "sqlite", db: await getSqlite() };
 }
 
-export function getUserById(id: string) {
-  return getDb()
-    .prepare(`SELECT id, email FROM users WHERE id = ?`)
-    .get(id) as { id: string; email: string } | undefined;
-}
-
-export function saveOtp(email: string, codeHash: string, expiresAt: number) {
-  getDb()
-    .prepare(
-      `INSERT INTO otps (email, code_hash, expires_at) VALUES (?, ?, ?)
-       ON CONFLICT(email) DO UPDATE SET code_hash=excluded.code_hash, expires_at=excluded.expires_at`,
-    )
-    .run(email.toLowerCase(), codeHash, expiresAt);
-}
-
-export function getOtp(email: string) {
-  return getDb()
-    .prepare(`SELECT code_hash as codeHash, expires_at as expiresAt FROM otps WHERE email = ?`)
-    .get(email.toLowerCase()) as { codeHash: string; expiresAt: number } | undefined;
-}
-
-export function deleteOtp(email: string) {
-  getDb().prepare(`DELETE FROM otps WHERE email = ?`).run(email.toLowerCase());
-}
-
-function rowToCheck(row: {
+type CheckRow = {
   id: string;
   user_id: string;
   claim: string;
@@ -81,7 +71,9 @@ function rowToCheck(row: {
   payload: string;
   created_at: string;
   updated_at: string;
-}): CheckRecord {
+};
+
+function rowToCheck(row: CheckRow): CheckRecord {
   return {
     id: row.id,
     userId: row.user_id,
@@ -93,66 +85,151 @@ function rowToCheck(row: {
   };
 }
 
-export function insertCheck(record: CheckRecord) {
-  getDb()
+export async function upsertUser(id: string, email: string) {
+  const now = new Date().toISOString();
+  const store = await getStore();
+  const e = email.toLowerCase();
+  if (store.kind === "d1") {
+    await store.db
+      .prepare(
+        `INSERT INTO users (id, email, created_at) VALUES (?, ?, ?)
+         ON CONFLICT(email) DO UPDATE SET email=excluded.email`,
+      )
+      .bind(id, e, now)
+      .run();
+    const row = await store.db
+      .prepare(`SELECT id, email FROM users WHERE email = ?`)
+      .bind(e)
+      .first<{ id: string; email: string }>();
+    return row!;
+  }
+  store.db
     .prepare(
-      `INSERT INTO checks (id, user_id, claim, status, payload, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO users (id, email, created_at) VALUES (?, ?, ?)
+       ON CONFLICT(email) DO UPDATE SET email=excluded.email`,
     )
-    .run(
-      record.id,
-      record.userId,
-      record.claim,
-      record.status,
-      JSON.stringify(record.payload),
-      record.createdAt,
-      record.updatedAt,
-    );
+    .run(id, e, now);
+  return store.db.prepare(`SELECT id, email FROM users WHERE email = ?`).get(e) as {
+    id: string;
+    email: string;
+  };
 }
 
-export function updateCheck(record: CheckRecord) {
-  getDb()
-    .prepare(
-      `UPDATE checks SET claim=?, status=?, payload=?, updated_at=? WHERE id=? AND user_id=?`,
-    )
-    .run(
-      record.claim,
-      record.status,
-      JSON.stringify(record.payload),
-      record.updatedAt,
-      record.id,
-      record.userId,
-    );
-}
-
-export function getCheck(id: string, userId: string) {
-  const row = getDb()
-    .prepare(`SELECT * FROM checks WHERE id = ? AND user_id = ?`)
-    .get(id, userId) as
-    | {
-        id: string;
-        user_id: string;
-        claim: string;
-        status: string;
-        payload: string;
-        created_at: string;
-        updated_at: string;
-      }
+export async function getUserById(id: string) {
+  const store = await getStore();
+  if (store.kind === "d1") {
+    return store.db
+      .prepare(`SELECT id, email FROM users WHERE id = ?`)
+      .bind(id)
+      .first<{ id: string; email: string }>();
+  }
+  return store.db.prepare(`SELECT id, email FROM users WHERE id = ?`).get(id) as
+    | { id: string; email: string }
     | undefined;
+}
+
+export async function saveOtp(email: string, codeHash: string, expiresAt: number) {
+  const store = await getStore();
+  const e = email.toLowerCase();
+  if (store.kind === "d1") {
+    await store.db
+      .prepare(
+        `INSERT INTO otps (email, code_hash, expires_at) VALUES (?, ?, ?)
+         ON CONFLICT(email) DO UPDATE SET code_hash=excluded.code_hash, expires_at=excluded.expires_at`,
+      )
+      .bind(e, codeHash, expiresAt)
+      .run();
+    return;
+  }
+  store.db
+    .prepare(
+      `INSERT INTO otps (email, code_hash, expires_at) VALUES (?, ?, ?)
+       ON CONFLICT(email) DO UPDATE SET code_hash=excluded.code_hash, expires_at=excluded.expires_at`,
+    )
+    .run(e, codeHash, expiresAt);
+}
+
+export async function getOtp(email: string) {
+  const store = await getStore();
+  const e = email.toLowerCase();
+  if (store.kind === "d1") {
+    const row = await store.db
+      .prepare(`SELECT code_hash as codeHash, expires_at as expiresAt FROM otps WHERE email = ?`)
+      .bind(e)
+      .first<{ codeHash: string; expiresAt: number }>();
+    return row ?? undefined;
+  }
+  return store.db
+    .prepare(`SELECT code_hash as codeHash, expires_at as expiresAt FROM otps WHERE email = ?`)
+    .get(e) as { codeHash: string; expiresAt: number } | undefined;
+}
+
+export async function deleteOtp(email: string) {
+  const store = await getStore();
+  const e = email.toLowerCase();
+  if (store.kind === "d1") {
+    await store.db.prepare(`DELETE FROM otps WHERE email = ?`).bind(e).run();
+    return;
+  }
+  store.db.prepare(`DELETE FROM otps WHERE email = ?`).run(e);
+}
+
+export async function insertCheck(record: CheckRecord) {
+  const store = await getStore();
+  const args = [
+    record.id,
+    record.userId,
+    record.claim,
+    record.status,
+    JSON.stringify(record.payload),
+    record.createdAt,
+    record.updatedAt,
+  ];
+  const sql = `INSERT INTO checks (id, user_id, claim, status, payload, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  if (store.kind === "d1") {
+    await store.db.prepare(sql).bind(...args).run();
+    return;
+  }
+  store.db.prepare(sql).run(...args);
+}
+
+export async function updateCheck(record: CheckRecord) {
+  const store = await getStore();
+  const sql = `UPDATE checks SET claim=?, status=?, payload=?, updated_at=? WHERE id=? AND user_id=?`;
+  const args = [
+    record.claim,
+    record.status,
+    JSON.stringify(record.payload),
+    record.updatedAt,
+    record.id,
+    record.userId,
+  ];
+  if (store.kind === "d1") {
+    await store.db.prepare(sql).bind(...args).run();
+    return;
+  }
+  store.db.prepare(sql).run(...args);
+}
+
+export async function getCheck(id: string, userId: string) {
+  const store = await getStore();
+  const sql = `SELECT * FROM checks WHERE id = ? AND user_id = ?`;
+  if (store.kind === "d1") {
+    const row = await store.db.prepare(sql).bind(id, userId).first<CheckRow>();
+    return row ? rowToCheck(row) : null;
+  }
+  const row = store.db.prepare(sql).get(id, userId) as CheckRow | undefined;
   return row ? rowToCheck(row) : null;
 }
 
-export function listChecks(userId: string) {
-  const rows = getDb()
-    .prepare(`SELECT * FROM checks WHERE user_id = ? ORDER BY created_at DESC`)
-    .all(userId) as Array<{
-    id: string;
-    user_id: string;
-    claim: string;
-    status: string;
-    payload: string;
-    created_at: string;
-    updated_at: string;
-  }>;
+export async function listChecks(userId: string) {
+  const store = await getStore();
+  const sql = `SELECT * FROM checks WHERE user_id = ? ORDER BY created_at DESC`;
+  if (store.kind === "d1") {
+    const { results } = await store.db.prepare(sql).bind(userId).all<CheckRow>();
+    return (results || []).map(rowToCheck);
+  }
+  const rows = store.db.prepare(sql).all(userId) as CheckRow[];
   return rows.map(rowToCheck);
 }

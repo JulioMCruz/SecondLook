@@ -12,7 +12,7 @@ export async function POST(
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const { id } = await ctx.params;
-  const check = getCheck(id, user.id);
+  const check = await getCheck(id, user.id);
   if (!check) return NextResponse.json({ error: "not found" }, { status: 404 });
   try {
     const { pass, gap } = await firstLook(check.claim);
@@ -20,7 +20,7 @@ export async function POST(
     check.payload.gap = gap;
     check.status = "first_look";
     check.updatedAt = new Date().toISOString();
-    updateCheck(check);
+    await updateCheck(check);
     return NextResponse.json({ check });
   } catch (err) {
     const message = err instanceof Error ? err.message : "first look failed";

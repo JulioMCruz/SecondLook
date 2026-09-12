@@ -12,7 +12,7 @@ export async function POST(
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const { id } = await ctx.params;
-  const check = getCheck(id, user.id);
+  const check = await getCheck(id, user.id);
   if (!check) return NextResponse.json({ error: "not found" }, { status: 404 });
   if (check.status !== "first_look" && check.status !== "unlocked") {
     return NextResponse.json({ error: "run first look first" }, { status: 400 });
@@ -30,7 +30,7 @@ export async function POST(
   if (body.purchaseStatus === "fail" || body.purchaseStatus === "cancel") {
     check.payload.entitlementActive = false;
     check.updatedAt = new Date().toISOString();
-    updateCheck(check);
+    await updateCheck(check);
     return NextResponse.json({ check, locked: true });
   }
 
@@ -38,7 +38,7 @@ export async function POST(
     check.payload.entitlementActive = false;
     check.status = "expired";
     check.updatedAt = new Date().toISOString();
-    updateCheck(check);
+    await updateCheck(check);
     return NextResponse.json({ check, locked: true });
   }
 
@@ -57,7 +57,7 @@ export async function POST(
     check.payload.entitlementActive = true;
     check.status = "unlocked";
     check.updatedAt = new Date().toISOString();
-    updateCheck(check);
+    await updateCheck(check);
     return NextResponse.json({ check });
   } catch (err) {
     const message = err instanceof Error ? err.message : "unlock failed";

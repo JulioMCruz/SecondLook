@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Valid email required" }, { status: 400 });
   }
   const code = String(randomInt(100000, 1000000));
-  saveOtp(email, hashCode(email, code), Date.now() + 10 * 60 * 1000);
+  await saveOtp(email, hashCode(email, code), Date.now() + 10 * 60 * 1000);
   const dev = process.env.NODE_ENV !== "production";
   return NextResponse.json({
     ok: true,
@@ -26,12 +26,12 @@ export async function PUT(req: Request) {
   const body = (await req.json().catch(() => ({}))) as { email?: string; code?: string };
   const email = (body.email || "").trim().toLowerCase();
   const code = (body.code || "").trim();
-  const row = getOtp(email);
+  const row = await getOtp(email);
   if (!row || row.expiresAt < Date.now() || row.codeHash !== hashCode(email, code)) {
     return NextResponse.json({ error: "Invalid or expired code" }, { status: 401 });
   }
-  deleteOtp(email);
-  const user = upsertUser(`usr_${randomUUID()}`, email);
+  await deleteOtp(email);
+  const user = await upsertUser(`usr_${randomUUID()}`, email);
   await setSessionCookie(user.id);
   return NextResponse.json({ ok: true, user });
 }

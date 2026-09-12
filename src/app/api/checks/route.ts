@@ -6,7 +6,7 @@ import { getSessionUser } from "@/lib/session";
 export async function GET() {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  return NextResponse.json({ checks: listChecks(user.id) });
+  return NextResponse.json({ checks: await listChecks(user.id) });
 }
 
 export async function POST(req: Request) {
@@ -27,6 +27,6 @@ export async function POST(req: Request) {
     createdAt: now,
     updatedAt: now,
   };
-  insertCheck(record);
+  await insertCheck(record);
   return NextResponse.json({ check: record });
 }

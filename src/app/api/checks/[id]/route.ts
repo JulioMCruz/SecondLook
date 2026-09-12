@@ -9,7 +9,7 @@ export async function GET(
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const { id } = await ctx.params;
-  const check = getCheck(id, user.id);
+  const check = await getCheck(id, user.id);
   if (!check) return NextResponse.json({ error: "not found" }, { status: 404 });
   return NextResponse.json({ check });
 }
