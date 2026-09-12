@@ -60,6 +60,14 @@ async function getSqlite(): Promise<SqliteDb> {
 }
 
 async function getStore(): Promise<Store> {
+  try {
+    const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+    const ctx = await getCloudflareContext({ async: true });
+    const db = (ctx.env as { DB?: D1Db }).DB;
+    if (db) return { kind: "d1", db };
+  } catch {
+    // next dev uses sqlite
+  }
   return { kind: "sqlite", db: await getSqlite() };
 }
 

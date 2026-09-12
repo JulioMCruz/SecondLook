@@ -37,6 +37,11 @@ yarn-error.log*
 # local sqlite
 /data/*.sqlite
 
+# cloudflare / opennext
+.open-next
+.wrangler
+.dev.vars
+
 # vercel
 .vercel
 
