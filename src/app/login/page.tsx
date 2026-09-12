@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, Suspense, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 
 function LoginForm() {
   const router = useRouter();
@@ -62,9 +62,12 @@ function LoginForm() {
     router.push("/app");
   }
 
-  if (params.get("demo") === "1" && !busy && stage === "email") {
-    // fall through; user still clicks
-  }
+  useEffect(() => {
+    if (params.get("demo") === "1") {
+      void demo();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <main className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-16">

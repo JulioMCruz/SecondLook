@@ -60,6 +60,78 @@ a { color: inherit; }
   pointer-events: none;
 }
 
+.sl-hero-glow {
+  position: absolute;
+  inset: -4rem 0 auto;
+  height: 28rem;
+  background:
+    radial-gradient(720px 280px at 18% 10%, rgba(31, 107, 74, 0.22), transparent 62%),
+    radial-gradient(520px 220px at 88% 0%, rgba(47, 138, 98, 0.12), transparent 70%);
+}
+
+.sl-embers {
+  position: absolute;
+  inset: 0;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, rgba(31, 107, 74, 0.35), transparent),
+    radial-gradient(1px 1px at 78% 18%, rgba(31, 107, 74, 0.25), transparent),
+    radial-gradient(1.4px 1.4px at 40% 8%, rgba(47, 138, 98, 0.28), transparent);
+  animation: sl-drift 18s ease-in-out infinite;
+}
+
+.sl-cta-glow {
+  box-shadow:
+    0 0 0 1px rgba(31, 107, 74, 0.2),
+    0 8px 28px rgba(31, 107, 74, 0.28);
+}
+
+.sl-card-glow {
+  box-shadow:
+    0 0 0 1px rgba(31, 107, 74, 0.04),
+    0 10px 28px rgba(26, 26, 26, 0.05);
+}
+
+.sl-reveal {
+  opacity: 1;
+}
+
+html[data-sl-motion="on"] .sl-reveal:not(.sl-in) {
+  opacity: 1;
+}
+
+html[data-sl-motion="on"] .sl-in {
+  animation: sl-rise 0.7s ease both;
+}
+
+.sl-bar {
+  transition: width 0.6s ease;
+}
+
+.sl-bar-run {
+  animation: sl-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes sl-rise {
+  from { transform: translateY(10px); opacity: 0.72; }
+  to { transform: none; opacity: 1; }
+}
+
+@keyframes sl-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(12px); }
+}
+
+@keyframes sl-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (max-width: 640px) {
+  .sl-hero-glow { opacity: 0.7; }
+  .sl-embers { opacity: 0.25; }
+}
+
 @media print {
   nav, .no-print { display: none !important; }
   body { background: white; }
