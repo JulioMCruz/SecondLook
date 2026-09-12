@@ -20,5 +20,8 @@
       "database_name": "secondlook",
       "database_id": "ab08c637-0076-434c-8229-b64ae11ac33d"
     }
-  ]
+  ],
+  "vars": {
+    "EMAIL_FROM": "SecondLook <beth.t@example.com>"
+  }
 }
