@@ -1,8 +1,16 @@
 @import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #f7f4ee;
+  --ink: #1a1a1a;
+  --muted: #6b6560;
+  --line: #d9d2c5;
+  --green: #1f6b4a;
+  --green-2: #2f8a62;
+  --slot: #c9c1b3;
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 @theme inline {
@@ -12,15 +20,47 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+* { box-sizing: border-box; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+a { color: inherit; }
+
+.glow-active {
+  box-shadow:
+    0 0 0 1px rgba(31, 107, 74, 0.35),
+    0 0 24px rgba(31, 107, 74, 0.18),
+    0 10px 30px rgba(26, 26, 26, 0.06);
+}
+
+.glow-done {
+  box-shadow:
+    0 0 0 1px rgba(31, 107, 74, 0.5),
+    0 8px 20px rgba(31, 107, 74, 0.08);
+}
+
+.slot-dashed {
+  border: 1.5px dashed var(--slot);
+  background:
+    radial-gradient(120px 80px at 50% 0%, rgba(31, 107, 74, 0.08), transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.decor {
+  pointer-events: none;
+}
+
+@media print {
+  nav, .no-print { display: none !important; }
+  body { background: white; }
 }

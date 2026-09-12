@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SecondLook
 
-## Getting Started
+Personal hackathon product for Burning Token (NERDCONF). Paste a market claim, keep the receipt.
 
-First, run the development server:
+Not affiliated with other products. UI copy is English.
+
+## What it does
+
+1. Sign in (email code or **Try with demo**).
+2. First look: Linkup search 1, findings saved.
+3. Paywall: RevenueCat Test Store entitlement `second_look`.
+4. Second look: Linkup follow-up on the gap + Nebius Token Factory brief.
+5. Brief stays in the account. Copy / print PDF. Time and token cost shown.
+
+Tracks: Linkup · Nebius · RevenueCat.
+
+## Run
 
 ```bash
+cd /Users/zknexus/Projects/Hackathons/Burning-Token-26/secondlook
+cp .env.example .env.local
+# fill LINKUP_API_KEY, NEBIUS_API_KEY, NEXT_PUBLIC_REVENUECAT_TEST_STORE_API_KEY, AUTH_SECRET
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Demo login: `/login` → Try with demo.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Env
 
-## Learn More
+See `.env.example`. Never put PerkOS Stripe keys in this repo.
 
-To learn more about Next.js, take a look at the following resources:
+## Test purchase
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a new RevenueCat project (personal). Use **Test Store** API key. Entitlement id: `second_look`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Fail path: **Simulate fail** keeps nodes 03–05 locked.
