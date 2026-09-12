@@ -104,7 +104,9 @@ function LoginForm() {
             <p className="text-xs text-[var(--muted)]">
               Dev code (email not configured): <span className="font-mono">{devCode}</span>
             </p>
-          ) : null}
+          ) : (
+            <p className="text-xs text-[var(--muted)]">Check your email for the 6-digit code.</p>
+          )}
           <button
             disabled={busy}
             className="w-full rounded-full bg-[var(--green)] py-3 text-sm font-medium text-white disabled:opacity-60"

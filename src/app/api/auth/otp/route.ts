@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createHash, randomInt, randomUUID } from "node:crypto";
 import { deleteOtp, getOtp, saveOtp, upsertUser } from "@/lib/db";
+import { sendLoginCode } from "@/lib/email";
 import { setSessionCookie } from "@/lib/session";
 
 function hashCode(email: string, code: string) {
@@ -15,10 +16,19 @@ export async function POST(req: Request) {
   }
   const code = String(randomInt(100000, 1000000));
   await saveOtp(email, hashCode(email, code), Date.now() + 10 * 60 * 1000);
-  const dev = process.env.NODE_ENV !== "production";
+  let sent = false;
+  try {
+    const result = await sendLoginCode(email, code);
+    sent = result.sent;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "email failed";
+    return NextResponse.json({ error: message }, { status: 502 });
+  }
+  const showDev = !sent && process.env.NODE_ENV !== "production";
   return NextResponse.json({
     ok: true,
-    ...(dev ? { devCode: code } : {}),
+    sent,
+    ...(showDev ? { devCode: code } : {}),
   });
 }
 
