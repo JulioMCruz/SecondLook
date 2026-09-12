@@ -49,34 +49,54 @@ Not a prize track, but used in prod:
 ## Architecture
 
 ```mermaid
-flowchart LR
-  subgraph Client
-    Browser["Browser\nlanding · login · canvas"]
-    RC["RevenueCat JS\nTest Store"]
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "ui-sans-serif, system-ui", "primaryTextColor": "#1a1a1a", "lineColor": "#1f6b4a", "clusterBkg": "#f7f4ee", "clusterBorder": "#d9d2c5"}}}%%
+flowchart TB
+  classDef paper fill:#f7f4ee,stroke:#d9d2c5,color:#1a1a1a
+  classDef cream fill:#fffdf8,stroke:#d9d2c5,color:#1a1a1a
+  classDef green fill:#1f6b4a,stroke:#163d2c,color:#fffdf8
+  classDef mint fill:#e8f2ed,stroke:#1f6b4a,color:#1a1a1a
+  classDef link fill:#1b6b8a,stroke:#0e3d4f,color:#fffdf8
+  classDef neb fill:#2f4a8a,stroke:#1a2c5c,color:#fffdf8
+  classDef paid fill:#c45c26,stroke:#8a3d14,color:#fffdf8
+  classDef mail fill:#6b6560,stroke:#3f3b38,color:#f7f4ee
+
+  subgraph Client["Client"]
+    Browser["Browser<br/>landing · login · canvas"]
+    RCJS["RevenueCat JS<br/>Test Store"]
   end
 
-  subgraph "Cloudflare Worker (OpenNext / Next.js)"
+  subgraph Worker["Cloudflare Worker · OpenNext"]
     API["App Router APIs"]
-    D1[("D1\nusers · otps\nchecks · contacts")]
+    D1[("D1<br/>users · otps<br/>checks · contacts")]
   end
 
-  subgraph Sponsors
-    Linkup["Linkup\nlive web search"]
-    Nebius["Nebius Token Factory\nbrief"]
-    RCAPI["RevenueCat\nentitlement second_look"]
+  subgraph Tracks["Cash tracks"]
+    Linkup["Linkup<br/>live web search"]
+    Nebius["Nebius Token Factory<br/>Fact / Hypothesis / Unknown"]
+    RCAPI["RevenueCat<br/>entitlement second_look"]
   end
 
-  Resend["Resend\nOTP · contact mail"]
+  Resend["Resend<br/>OTP · contact"]
 
-  Browser --> API
-  Browser --> RC
-  RC --> RCAPI
-  API --> D1
-  API --> Linkup
-  API --> Nebius
-  API --> RCAPI
+  Browser -->|HTTPS| API
+  Browser -->|purchase| RCJS
+  RCJS --> RCAPI
+  API -->|read / write| D1
+  API -->|"1 free · 2 after pay"| Linkup
+  API -->|after unlock| Nebius
+  API -->|check entitlement| RCAPI
   API --> Resend
+
+  class Browser,RCJS paper
+  class API green
+  class D1 cream
+  class Linkup link
+  class Nebius neb
+  class RCAPI paid
+  class Resend mail
 ```
+
+Color key: paper client · green APIs · teal Linkup · indigo Nebius · orange RevenueCat · grey Resend.
 
 Request map:
 
@@ -92,7 +112,9 @@ Request map:
 ## User sequence
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "ui-sans-serif, system-ui", "actorBkg": "#1f6b4a", "actorTextColor": "#fffdf8", "actorBorder": "#163d2c", "actorLineColor": "#1f6b4a", "signalColor": "#1a1a1a", "signalTextColor": "#1a1a1a", "noteBkgColor": "#fffdf8", "noteTextColor": "#1a1a1a", "noteBorderColor": "#d9d2c5", "activationBkgColor": "#e8f2ed", "sequenceNumberColor": "#fffdf8"}}}%%
 sequenceDiagram
+  autonumber
   actor U as Owner
   participant Web as SecondLook
   participant L as Linkup
@@ -100,26 +122,32 @@ sequenceDiagram
   participant N as Nebius
   participant DB as D1
 
-  U->>Web: Sign in (OTP or demo)
-  U->>Web: Paste claim on /app/new
-  Web->>DB: Insert check
-  Web->>L: First look (live web)
-  L-->>Web: Sources
-  Web->>DB: Save findings + named gap
-  Web-->>U: First look on canvas<br/>nodes 03–05 locked
+  rect rgb(232, 242, 237)
+    Note over U,DB: Free — first look
+    U->>Web: Sign in (OTP or demo)
+    U->>Web: Paste claim on /app/new
+    Web->>DB: Insert check
+    Web->>L: Search 1 (live web)
+    L-->>Web: Sources
+    Web->>DB: Save findings + named gap
+    Web-->>U: Canvas: 01–02 done · 03–05 locked
+  end
 
-  alt Pays Test Store (entitlement second_look)
-    U->>RC: Purchase
-    RC-->>Web: entitled = true
-    Web->>L: Follow-up search (from the gap)
-    L-->>Web: Counter-evidence
-    Web->>N: Write brief from findings only
-    N-->>Web: Fact / Hypothesis / Unknown + time/cost
-    Web->>DB: Save brief
-    Web-->>U: Open /app/[id] in Your receipts
-  else Fail / cancel
-    RC-->>Web: purchaseStatus = fail
-    Web-->>U: Lock stays dashed<br/>first look remains
+  rect rgb(255, 243, 232)
+    Note over U,N: Paid — second look (entitlement second_look)
+    U->>RC: Test Store purchase
+    alt Success
+      RC-->>Web: entitled = true
+      Web->>L: Search 2 (from the gap)
+      L-->>Web: Counter-evidence
+      Web->>N: Write brief from findings only
+      N-->>Web: Fact / Hypothesis / Unknown + time/cost
+      Web->>DB: Save brief
+      Web-->>U: Open /app/[id] in Your receipts
+    else Fail / cancel
+      RC-->>Web: purchaseStatus = fail
+      Web-->>U: Lock stays dashed · first look remains
+    end
   end
 ```
 
