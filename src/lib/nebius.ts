@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import type { Brief, Metrics, SearchPass } from "./types";
 
-const DEFAULT_MODEL = "openai/gpt-oss-20b";
+const DEFAULT_MODEL = "openai/gpt-oss-120b";
 
 function client() {
   const apiKey = process.env.NEBIUS_API_KEY;
