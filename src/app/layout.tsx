@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   title: "SecondLook — keep the receipt",
   description:
     "Paste the claim they sold you. First look is free. Pay to unlock the follow-up and keep the brief.",
+  icons: { icon: "/logo.png", apple: "/logo.png" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

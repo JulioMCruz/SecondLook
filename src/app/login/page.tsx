@@ -71,7 +71,10 @@ function LoginForm() {
 
   return (
     <main className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-16">
-      <p className="text-sm font-semibold">SecondLook</p>
+      <p className="flex items-center gap-2 text-sm font-semibold">
+        <img src="/logo.png" alt="" className="h-7 w-7 rounded object-cover object-[center_38%]" />
+        SecondLook
+      </p>
       <h1 className="mt-3 text-3xl font-semibold tracking-tight">Sign in</h1>
       <p className="mt-2 text-sm text-[var(--muted)]">Email and a 6-digit code. No password. No wallet.</p>
 
