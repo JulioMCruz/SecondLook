@@ -3,13 +3,17 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useT } from "@/components/LocaleProvider";
 import type { CheckRecord } from "@/lib/types";
 
 export default function BriefPage() {
+  const { t } = useT();
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const [check, setCheck] = useState<CheckRecord | null>(null);
   const [copied, setCopied] = useState(false);
+  const [emailing, setEmailing] = useState(false);
+  const [emailFlash, setEmailFlash] = useState("");
 
   useEffect(() => {
     fetch("/api/auth/me").then((r) => {
@@ -21,7 +25,7 @@ export default function BriefPage() {
   }, [params.id, router]);
 
   if (!check) {
-    return <main className="px-6 py-10 text-sm text-[var(--muted)]">Loading…</main>;
+    return <main className="px-6 py-10 text-sm text-[var(--muted)]">{t.loading}</main>;
   }
 
   const brief = check.payload.brief;
@@ -36,34 +40,48 @@ export default function BriefPage() {
     setTimeout(() => setCopied(false), 1500);
   }
 
+  async function emailAgain() {
+    if (!check) return;
+    setEmailing(true);
+    setEmailFlash("");
+    const res = await fetch(`/api/checks/${check.id}/email`, { method: "POST" });
+    const data = await res.json();
+    setEmailing(false);
+    if (data.check) setCheck(data.check);
+    if (data.emailed?.sent || data.emailed?.copiedToNotify) {
+      setEmailFlash(t.emailedJustNow);
+      setTimeout(() => setEmailFlash(""), 2000);
+    }
+  }
+
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-8">
       <div className="no-print mb-6 flex items-center justify-between">
         <Link href="/app" className="text-sm text-[var(--muted)]">
-          ← Receipts
+          {t.backReceipts}
         </Link>
         <div className="flex gap-2">
           <button
             onClick={copy}
             className="rounded-full border border-[var(--line)] px-4 py-2 text-sm"
           >
-            {copied ? "Copied" : "Copy"}
+            {copied ? t.copied : t.copy}
           </button>
           <button
             onClick={() => window.print()}
             className="rounded-full bg-[var(--green)] px-4 py-2 text-sm font-medium text-white"
           >
-            Download PDF
+            {t.pdf}
           </button>
         </div>
       </div>
 
-      <p className="text-xs uppercase tracking-wider text-[var(--muted)]">Saved brief</p>
+      <p className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.savedBrief}</p>
       <h1 className="mt-2 text-2xl font-semibold tracking-tight">{check.claim}</h1>
 
       {locked ? (
         <p className="mt-6 rounded-xl border border-[var(--line)] bg-white p-4 text-sm">
-          Full brief is hidden. First look remains. Entitlement expired or purchase did not complete.
+          {t.briefHidden}
         </p>
       ) : (
         <article className="mt-6 space-y-5 rounded-2xl border border-[var(--line)] bg-white p-6">
@@ -73,7 +91,7 @@ export default function BriefPage() {
           <p className="leading-7">{brief.summary}</p>
           {brief.facts.length ? (
             <section>
-              <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">Facts</h2>
+              <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.facts}</h2>
               <ul className="mt-2 list-disc pl-5 text-sm leading-6">
                 {brief.facts.map((f) => (
                   <li key={f}>{f}</li>
@@ -116,6 +134,29 @@ export default function BriefPage() {
               Struggle case: {brief.struggleNote || "The product could not close this claim."}
             </p>
           ) : null}
+
+          <div className="no-print rounded-xl border border-[var(--line)] bg-[var(--paper,#f7f4ee)] px-4 py-3 text-sm">
+            {check.payload.reportEmailedAt ? (
+              <p>
+                {t.emailed} {check.payload.reportEmailedTo}
+                {check.payload.reportEmailCopiedToNotify ? ` · ${t.emailCopyNotify}` : ""}
+              </p>
+            ) : check.payload.reportEmailError ? (
+              <p className="text-[var(--muted)]">{t.emailFail}</p>
+            ) : (
+              <p className="text-[var(--muted)]">{t.emailNotYet}</p>
+            )}
+            {check.payload.reportEmailError && !check.payload.reportEmailedAt ? (
+              <p className="mt-1 text-xs text-red-700">{check.payload.reportEmailError}</p>
+            ) : null}
+            <button
+              onClick={emailAgain}
+              disabled={emailing}
+              className="mt-3 rounded-full border border-[var(--line)] bg-white px-4 py-1.5 text-sm disabled:opacity-60"
+            >
+              {emailing ? t.emailing : emailFlash || t.emailMe}
+            </button>
+          </div>
         </article>
       )}
 

@@ -21,7 +21,11 @@
       "database_id": "ab08c637-0076-434c-8229-b64ae11ac33d"
     }
   ],
+  "ai": {
+    "binding": "AI"
+  },
   "vars": {
-    "EMAIL_FROM": "SecondLook <beth.t@example.com>"
+    "EMAIL_FROM": "SecondLook <beth.t@example.com>",
+    "CONTACT_NOTIFY_EMAIL": "julio.cruz@eb-ms.net"
   }
 }

@@ -5,15 +5,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useState } from "react";
 import CheckCanvas from "@/components/CheckCanvas";
 import PaywallButton from "@/components/PaywallButton";
+import VoiceListen from "@/components/VoiceListen";
+import { useT } from "@/components/LocaleProvider";
 import type { CheckRecord } from "@/lib/types";
 
 function NewCheckInner() {
+  const { t } = useT();
   const router = useRouter();
   const params = useSearchParams();
   const existingId = params.get("id");
-  const [claim, setClaim] = useState(
-    "All my competitors already answer WhatsApp with AI.",
-  );
+  const [claim, setClaim] = useState<string>(t.sampleClaim);
   const [check, setCheck] = useState<CheckRecord | null>(null);
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
@@ -114,28 +115,35 @@ function NewCheckInner() {
     <main className="mx-auto w-full max-w-6xl px-6 py-8">
       <div className="mb-6 flex items-center justify-between">
         <Link href="/app" className="text-sm text-[var(--muted)]">
-          ← Receipts
+          {t.backReceipts}
         </Link>
         <p className="text-xs text-[var(--muted)]">{email}</p>
       </div>
 
-      <h1 className="text-2xl font-semibold tracking-tight">New check</h1>
-      <p className="mt-1 text-sm text-[var(--muted)]">
-        First look is free. The gap, follow-up, and brief unlock after a Test Store purchase.
-      </p>
+      <h1 className="sl-serif text-3xl font-medium tracking-tight">{t.newTitle}</h1>
+      <p className="mt-1 text-sm text-[var(--muted)]">{t.newBody}</p>
+
+      <VoiceListen
+        value={claim}
+        onTranscript={setClaim}
+        disabled={Boolean(running) || Boolean(check?.payload.firstLook)}
+      />
 
       <form onSubmit={start} className="mt-6 space-y-3">
-        <textarea
-          value={claim}
-          onChange={(e) => setClaim(e.target.value)}
-          rows={3}
-          className="w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 outline-none focus:border-[var(--green)]"
-        />
+        <label className="block text-xs text-[var(--muted)]">
+          {t.orType}
+          <textarea
+            value={claim}
+            onChange={(e) => setClaim(e.target.value)}
+            rows={3}
+            className="mt-1 w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--green)]"
+          />
+        </label>
         <button
           disabled={Boolean(running) || check?.status === "first_look"}
           className="rounded-full bg-[var(--green)] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60"
         >
-          {running ? "Looking up…" : check?.payload.firstLook ? "First look saved" : "Run first look"}
+          {running ? t.lookingUp : check?.payload.firstLook ? t.firstSaved : t.runFirst}
         </button>
       </form>
 

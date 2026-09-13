@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { CheckRecord } from "@/lib/types";
+import { LangSwitch, useT } from "@/components/LocaleProvider";
 
 export default function AppHome() {
+  const { t } = useT();
   const router = useRouter();
   const [checks, setChecks] = useState<CheckRecord[] | null>(null);
   const [email, setEmail] = useState("");
@@ -42,21 +44,22 @@ export default function AppHome() {
           <p className="text-xs text-[var(--muted)]">{email}</p>
         </div>
         <div className="flex items-center gap-3">
+          <LangSwitch />
           <Link
             href="/app/new"
             className="rounded-full bg-[var(--green)] px-4 py-2 text-sm font-medium text-white"
           >
-            New check
+            {t.speakClaim}
           </Link>
           <button onClick={logout} className="text-sm text-[var(--muted)]">
-            Sign out
+            {t.signOut}
           </button>
         </div>
       </header>
 
       {!keys.linkup || !keys.nebius || !keys.revenuecat ? (
         <p className="mt-6 rounded-xl border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--muted)]">
-          Keys missing for live tracks:
+          {t.keysMissing}
           {!keys.linkup ? " Linkup" : ""}
           {!keys.nebius ? " Nebius" : ""}
           {!keys.revenuecat ? " RevenueCat Test Store" : ""}.
@@ -64,14 +67,14 @@ export default function AppHome() {
         </p>
       ) : null}
 
-      <h1 className="mt-10 text-2xl font-semibold tracking-tight">Your receipts</h1>
-      <p className="mt-1 text-sm text-[var(--muted)]">This folder is the product. Each check stays in your account.</p>
+      <h1 className="mt-10 text-2xl font-semibold tracking-tight">{t.receipts}</h1>
+      <p className="mt-1 text-sm text-[var(--muted)]">{t.receiptsBody}</p>
 
       <ul className="mt-6 space-y-3">
-        {checks === null ? <li className="text-sm text-[var(--muted)]">Loading…</li> : null}
+        {checks === null ? <li className="text-sm text-[var(--muted)]">{t.loading}</li> : null}
         {checks?.length === 0 ? (
           <li className="rounded-2xl border border-dashed border-[var(--line)] px-5 py-10 text-sm text-[var(--muted)]">
-            No checks yet. Start with a claim someone tried to sell you.
+            {t.noChecks}
           </li>
         ) : null}
         {checks?.map((c) => (

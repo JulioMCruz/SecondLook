@@ -19,6 +19,82 @@ function model() {
 // Rough Token Factory list price fallback for the eval panel.
 const USD_PER_MTOK = 0.15;
 
+type AiRunner = {
+  run: (model: string, input: Record<string, unknown>) => Promise<{ text?: string }>;
+};
+
+async function transcribeAudio(bytes: Uint8Array, _filename: string, _mime: string) {
+  const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+  const ctx = await getCloudflareContext({ async: true });
+  const ai = (ctx.env as { AI?: AiRunner }).AI;
+  if (!ai) throw new Error("Voice transcription is not bound on this worker");
+
+  const audio = Array.from(bytes);
+  const models = ["@cf/openai/whisper-large-v3-turbo", "@cf/openai/whisper"];
+  let last = "transcription failed";
+  for (const sttModel of models) {
+    try {
+      const result = await ai.run(sttModel, { audio });
+      const text = result?.text?.trim() || "";
+      if (text) return { text, sttModel };
+      last = `${sttModel} returned empty text`;
+    } catch (err) {
+      last = err instanceof Error ? err.message : "transcription failed";
+    }
+  }
+  throw new Error(last);
+}
+
+async function polishClaim(raw: string) {
+  const completion = await client().chat.completions.create({
+    model: model(),
+    temperature: 0.1,
+    response_format: { type: "json_object" },
+    messages: [
+      {
+        role: "system",
+        content: `You turn a spoken transcript into one market claim a small-business owner was sold.
+Return JSON: { "claim": string }.
+Rules:
+- One sentence, in the SAME language as the transcript (Spanish or English).
+- Keep the speaker's meaning. Do not invent a company or city they did not say.
+- No quotes around the whole claim.
+- If the audio is not a claim, still compress it into the closest market claim.`,
+      },
+      { role: "user", content: raw },
+    ],
+  });
+  const content = completion.choices[0]?.message?.content || "{}";
+  let claim = raw;
+  try {
+    const parsed = JSON.parse(content) as { claim?: string };
+    if (parsed.claim?.trim()) claim = parsed.claim.trim();
+  } catch {
+    claim = raw;
+  }
+  return {
+    claim,
+    polishModel: completion.model || model(),
+    promptTokens: completion.usage?.prompt_tokens ?? 0,
+    completionTokens: completion.usage?.completion_tokens ?? 0,
+  };
+}
+
+export async function voiceToClaim(bytes: Uint8Array, filename: string, mime: string) {
+  const started = Date.now();
+  const stt = await transcribeAudio(bytes, filename, mime);
+  const polished = await polishClaim(stt.text);
+  return {
+    raw: stt.text,
+    claim: polished.claim,
+    sttModel: stt.sttModel,
+    polishModel: polished.polishModel,
+    ms: Date.now() - started,
+    promptTokens: polished.promptTokens,
+    completionTokens: polished.completionTokens,
+  };
+}
+
 export async function writeBrief(input: {
   claim: string;
   firstLook: SearchPass;

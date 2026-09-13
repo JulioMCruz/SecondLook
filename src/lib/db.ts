@@ -42,6 +42,13 @@ CREATE TABLE IF NOT EXISTS checks (
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS contacts (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  message TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
 `;
 
 let sqlite: SqliteDb | null = null;
@@ -240,4 +247,32 @@ export async function listChecks(userId: string) {
   }
   const rows = store.db.prepare(sql).all(userId) as CheckRow[];
   return rows.map(rowToCheck);
+}
+
+const CONTACTS_DDL = `CREATE TABLE IF NOT EXISTS contacts (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  message TEXT NOT NULL,
+  created_at TEXT NOT NULL
+)`;
+
+export async function saveContact(row: {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
+}) {
+  const store = await getStore();
+  const sql = `INSERT INTO contacts (id, name, email, message, created_at) VALUES (?, ?, ?, ?, ?)`;
+  if (store.kind === "d1") {
+    await store.db
+      .prepare(sql)
+      .bind(row.id, row.name, row.email, row.message, row.createdAt)
+      .run();
+    return;
+  }
+  store.db.exec(CONTACTS_DDL);
+  store.db.prepare(sql).run(row.id, row.name, row.email, row.message, row.createdAt);
 }

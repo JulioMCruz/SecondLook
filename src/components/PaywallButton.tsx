@@ -2,6 +2,7 @@
 
 import { Purchases, type Package } from "@revenuecat/purchases-js";
 import { useCallback, useEffect, useState } from "react";
+import { useT } from "@/components/LocaleProvider";
 
 const ENTITLEMENT = "second_look";
 
@@ -28,6 +29,7 @@ function ensureConfigured(appUserId: string) {
 }
 
 export default function PaywallButton({ appUserId, email, onResult }: Props) {
+  const { t } = useT();
   const [offer, setOffer] = useState<Package | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -76,7 +78,7 @@ export default function PaywallButton({ appUserId, email, onResult }: Props) {
     return (
       <div className="rounded-xl border border-[var(--line)] bg-white p-4 text-sm">
         <span className="mr-2 rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold">TEST</span>
-        RevenueCat Test Store key is not set. Cannot run a real test purchase.
+        {t.payNoKey}
       </div>
     );
   }
@@ -85,18 +87,15 @@ export default function PaywallButton({ appUserId, email, onResult }: Props) {
     <div className="rounded-xl border border-[var(--line)] bg-white p-4">
       <div className="flex items-center gap-2">
         <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold">TEST</span>
-        <p className="text-sm font-medium">Unlock the second look</p>
+        <p className="text-sm font-medium">{t.payTitle}</p>
       </div>
-      <p className="mt-2 text-sm text-[var(--muted)]">
-        Test Store purchase. Follow-up search + brief stay locked until entitlement{" "}
-        <code>second_look</code> is active.
-      </p>
+      <p className="mt-2 text-sm text-[var(--muted)]">{t.payBody}</p>
       {offer ? (
         <p className="mt-2 text-xs text-[var(--muted)]">
-          Offer: {offer.webBillingProduct.title} · {offer.webBillingProduct.currentPrice.formattedPrice}
+          {t.payOffer}: {offer.webBillingProduct.title} · {offer.webBillingProduct.currentPrice.formattedPrice}
         </p>
       ) : (
-        <p className="mt-2 text-xs text-[var(--muted)]">Loading Test Store offer…</p>
+        <p className="mt-2 text-xs text-[var(--muted)]">{t.payLoading}</p>
       )}
       <div className="mt-3 flex flex-wrap gap-2">
         <button
@@ -104,13 +103,13 @@ export default function PaywallButton({ appUserId, email, onResult }: Props) {
           disabled={busy || !offer}
           className="rounded-full bg-[var(--green)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
         >
-          {busy ? "Opening Test Store…" : "Test purchase"}
+          {busy ? t.payBusy : t.payBuy}
         </button>
         <button
           onClick={failPurchase}
           className="rounded-full border border-[var(--line)] px-4 py-2 text-sm"
         >
-          Simulate fail
+          {t.payFailSim}
         </button>
       </div>
       {error ? <p className="mt-2 text-xs text-red-700">{error}</p> : null}

@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { getCheck, updateCheck } from "@/lib/db";
+import { applyReportEmail, sendBriefReport } from "@/lib/email";
+import { detectLocale, langCookieName } from "@/lib/i18n";
 import { getSessionUser } from "@/lib/session";
 import { secondLook } from "@/lib/research";
 
@@ -58,7 +61,21 @@ export async function POST(
     check.status = "unlocked";
     check.updatedAt = new Date().toISOString();
     await updateCheck(check);
-    return NextResponse.json({ check });
+
+    try {
+      const jar = await cookies();
+      const locale = detectLocale(jar.get(langCookieName())?.value);
+      const emailed = await sendBriefReport({ to: user.email, locale, check });
+      applyReportEmail(check, emailed);
+      check.updatedAt = new Date().toISOString();
+      await updateCheck(check);
+      return NextResponse.json({ check, emailed });
+    } catch (mailErr) {
+      const message = mailErr instanceof Error ? mailErr.message : "email failed";
+      check.payload.reportEmailError = message;
+      await updateCheck(check);
+      return NextResponse.json({ check, emailed: { sent: false, error: message } });
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : "unlock failed";
     return NextResponse.json({ error: message }, { status: 500 });

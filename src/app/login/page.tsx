@@ -2,8 +2,10 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useState } from "react";
+import { LangSwitch, useT } from "@/components/LocaleProvider";
 
 function LoginForm() {
+  const { t } = useT();
   const router = useRouter();
   const params = useSearchParams();
   const [email, setEmail] = useState("");
@@ -25,7 +27,7 @@ function LoginForm() {
     const data = await res.json();
     setBusy(false);
     if (!res.ok) {
-      setError(data.error || "Could not send code");
+      setError(data.error || t.sendCodeFail);
       return;
     }
     if (data.devCode) setDevCode(data.devCode);
@@ -44,7 +46,7 @@ function LoginForm() {
     const data = await res.json();
     setBusy(false);
     if (!res.ok) {
-      setError(data.error || "Invalid code");
+      setError(data.error || t.invalidCode);
       return;
     }
     router.push("/app");
@@ -56,7 +58,7 @@ function LoginForm() {
     const res = await fetch("/api/auth/demo", { method: "POST" });
     setBusy(false);
     if (!res.ok) {
-      setError("Demo login failed");
+      setError(t.demoFail);
       return;
     }
     router.push("/app");
@@ -71,12 +73,15 @@ function LoginForm() {
 
   return (
     <main className="mx-auto flex min-h-full w-full max-w-md flex-col justify-center px-6 py-16">
-      <p className="flex items-center gap-2 text-sm font-semibold">
-        <img src="/logo.png" alt="" className="h-7 w-7 rounded object-cover object-[center_38%]" />
-        SecondLook
-      </p>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight">Sign in</h1>
-      <p className="mt-2 text-sm text-[var(--muted)]">Email and a 6-digit code. No password. No wallet.</p>
+      <div className="flex items-center justify-between">
+        <p className="flex items-center gap-2 text-sm font-semibold">
+          <img src="/logo.png" alt="" className="h-7 w-7 rounded object-cover object-[center_38%]" />
+          SecondLook
+        </p>
+        <LangSwitch />
+      </div>
+      <h1 className="mt-3 text-3xl font-semibold tracking-tight">{t.loginTitle}</h1>
+      <p className="mt-2 text-sm text-[var(--muted)]">{t.loginBody}</p>
 
       {stage === "email" ? (
         <form onSubmit={requestCode} className="mt-8 space-y-4">
@@ -92,7 +97,7 @@ function LoginForm() {
             disabled={busy}
             className="w-full rounded-full bg-[var(--green)] py-3 text-sm font-medium text-white disabled:opacity-60"
           >
-            {busy ? "Sending…" : "Send code"}
+            {busy ? t.sending : t.sendCode}
           </button>
         </form>
       ) : (
@@ -108,16 +113,16 @@ function LoginForm() {
           />
           {devCode ? (
             <p className="text-xs text-[var(--muted)]">
-              Dev code (email not configured): <span className="font-mono">{devCode}</span>
+              {t.devCode} <span className="font-mono">{devCode}</span>
             </p>
           ) : (
-            <p className="text-xs text-[var(--muted)]">Check your email for the 6-digit code.</p>
+            <p className="text-xs text-[var(--muted)]">{t.checkEmail}</p>
           )}
           <button
             disabled={busy}
             className="w-full rounded-full bg-[var(--green)] py-3 text-sm font-medium text-white disabled:opacity-60"
           >
-            {busy ? "Checking…" : "Continue"}
+            {busy ? t.checking : t.continue}
           </button>
         </form>
       )}
@@ -127,7 +132,7 @@ function LoginForm() {
         disabled={busy}
         className="mt-4 w-full rounded-full border border-[var(--line)] py-3 text-sm font-medium"
       >
-        Try with demo
+        {t.tryDemo}
       </button>
       {error ? <p className="mt-4 text-sm text-red-700">{error}</p> : null}
     </main>

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
+import { cookies, headers } from "next/headers";
+import LocaleProvider from "@/components/LocaleProvider";
+import { detectLocale, langCookieName, messages } from "@/lib/i18n";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,17 +15,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "SecondLook — keep the receipt",
-  description:
-    "Paste the claim they sold you. First look is free. Pay to unlock the follow-up and keep the brief.",
-  icons: { icon: "/logo.png", apple: "/logo.png" },
-};
+const newsreader = Newsreader({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+});
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export async function generateMetadata(): Promise<Metadata> {
+  const jar = await cookies();
+  const hdrs = await headers();
+  const locale = detectLocale(jar.get(langCookieName())?.value, hdrs.get("accept-language"));
+  const t = messages[locale];
+  return {
+    title: t.metaTitle,
+    description: t.metaDesc,
+    icons: { icon: "/logo.png", apple: "/logo.png" },
+  };
+}
+
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const jar = await cookies();
+  const hdrs = await headers();
+  const locale = detectLocale(jar.get(langCookieName())?.value, hdrs.get("accept-language"));
+
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html
+      lang={locale}
+      className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
+        <LocaleProvider initial={locale}>{children}</LocaleProvider>
+      </body>
     </html>
   );
 }

@@ -53,6 +53,10 @@ export type CheckPayload = {
   metrics?: Metrics;
   entitlementActive?: boolean;
   lastPurchaseStatus?: "success" | "fail" | "cancel" | "expired";
+  reportEmailedTo?: string;
+  reportEmailedAt?: string;
+  reportEmailError?: string;
+  reportEmailCopiedToNotify?: boolean;
 };
 
 export type CheckRecord = {

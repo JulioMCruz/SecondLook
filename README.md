@@ -1,35 +1,35 @@
 # SecondLook
 
-Paste a market claim. Keep the receipt.
+Say what they told you. Keep the report.
 
 Live: [secondlook.juliomcruz.workers.dev](https://secondlook.juliomcruz.workers.dev)
 
-Personal product for **Burning Token (NERDCONF)**. English UI. One account, one canvas, a folder of briefs.
+Personal product for **Burning Token (NERDCONF)**. UI in English and Spanish. One account, a folder of reports.
 
-It is not a chatbot, not a stack recommender, and not an interview. It verifies **one sentence someone tried to sell you** and stores the paper.
+It is not a chatbot, not a software picker, and not an interview. It checks **one sentence someone tried to sell you** and stores the paper.
 
 ## What the user gets
 
-You walk in with a sentence from a sales deck. You walk out with a file on your account.
+You walk in with a sentence from a sales pitch. You walk out with a file on your account.
 
 | Always (free first look) | If you pay (second look) |
 |---|---|
-| The claim, dated | A second live-web search aimed at the gap |
-| Sources from a **live web** search | A written verdict: **Fact / Hypothesis / Unknown** |
-| The hole in the pitch, named | Time and token cost of the run |
+| The sentence, dated | A second live-web search aimed at what is missing |
+| Sources from a **live web** search | A written stamp: **Fact / Hypothesis / Unknown** |
+| What the pitch did not prove | Time and cost, plus the report **emailed** to you |
 
-Fail or cancel the purchase: nodes 03–05 stay locked. The first look remains yours.
+Fail or cancel the purchase: the paid steps stay locked. The first look remains yours.
 
 The product is **Your receipts** (`/app`) — the folder, not the chat.
 
 ## How a check runs
 
-1. Sign in (email + 6-digit code) or **Try with demo**.
-2. Paste the claim on `/app/new`.
-3. **First look (free):** Linkup search → findings saved on the account → gap named.
-4. Paywall: RevenueCat Test Store entitlement `second_look`.
-5. **Second look (paid):** Linkup follow-up on the gap → Nebius Token Factory writes the brief.
-6. Brief lives at `/app/[id]`. Open it next week. The folder grows.
+1. Sign in (email + 6-digit code) or **Try the demo**.
+2. Say or type the sentence on `/app/new`.
+3. **First look (free):** live-web search → sources saved → what is missing, named.
+4. Paywall: RevenueCat Test Store. Pay only if you want the full report.
+5. **Second look (paid):** second search → written Fact / Hypothesis / Unknown → **email the report**.
+6. Report lives at `/app/[id]` and in the inbox. Open it next week. The folder grows.
 
 ## Sponsors (cash tracks)
 
@@ -44,7 +44,7 @@ One product, three load-bearing SDKs. Not three apps.
 Not a prize track, but used in prod:
 
 - **Cloudflare Workers + D1** — host, auth, checks, contact notes
-- **Resend** — login OTP and contact notify / autoresponder (personal key; not a sponsor)
+- **Resend** — login OTP, contact notes, and the **paid report** emailed after unlock (personal key; not a sponsor)
 
 ## Architecture
 

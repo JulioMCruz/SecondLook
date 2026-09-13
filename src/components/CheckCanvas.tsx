@@ -11,6 +11,7 @@ import {
   type NodeProps,
 } from "@xyflow/react";
 import { memo, useMemo } from "react";
+import { useT } from "@/components/LocaleProvider";
 import type { CheckRecord, NodeState } from "@/lib/types";
 
 type FlowNodeData = {
@@ -70,45 +71,44 @@ export default function CheckCanvas({
   check: CheckRecord | null;
   running: string | null;
 }) {
+  const { t } = useT();
   const nodes: Node<FlowNodeData>[] = useMemo(() => {
     if (!check) return [];
+    const n = check.payload.firstLook?.sources.length ?? 0;
+    const n2 = check.payload.followUp?.sources.length ?? 0;
     const items: Array<{ id: string; title: string; detail: string; step: number; x: number }> = [
       {
         id: "1",
-        title: "Look up",
-        detail: check.payload.firstLook
-          ? `${check.payload.firstLook.sources.length} sources`
-          : "Linkup search 1",
+        title: t.canvasLookup,
+        detail: check.payload.firstLook ? `${n} ${t.canvasSources}` : t.canvasSearch1,
         step: 1,
         x: 0,
       },
       {
         id: "2",
-        title: "Save findings",
-        detail: check.payload.firstLook ? "Stored on your account" : "Persist sources",
+        title: t.canvasSave,
+        detail: check.payload.firstLook ? t.canvasOnFile : t.canvasSaving,
         step: 2,
         x: 260,
       },
       {
         id: "3",
-        title: "Find the gap",
-        detail: check.payload.gap?.label || "Locked until second look",
+        title: t.canvasGap,
+        detail: check.payload.gap?.label || t.canvasLockedUntil,
         step: 3,
         x: 520,
       },
       {
         id: "4",
-        title: "Follow-up",
-        detail: check.payload.followUp
-          ? `${check.payload.followUp.sources.length} sources`
-          : "Linkup search 2",
+        title: t.canvasFollow,
+        detail: check.payload.followUp ? `${n2} ${t.canvasSources}` : t.canvasSearch2,
         step: 4,
         x: 780,
       },
       {
         id: "5",
-        title: "Brief",
-        detail: check.payload.brief?.verdict || "Nebius writes the receipt",
+        title: t.canvasBrief,
+        detail: check.payload.brief?.verdict || t.canvasWrites,
         step: 5,
         x: 1040,
       },
@@ -125,7 +125,7 @@ export default function CheckCanvas({
       },
       draggable: false,
     }));
-  }, [check, running]);
+  }, [check, running, t]);
 
   const edges: Edge[] = useMemo(
     () =>
