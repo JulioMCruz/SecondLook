@@ -86,11 +86,23 @@ export default function AppHome() {
               <div>
                 <p className="font-medium">{c.claim}</p>
                 <p className="mt-1 text-xs text-[var(--muted)]">
-                  {new Date(c.createdAt).toLocaleString()} · {c.status.replace("_", " ")}
+                  {new Date(c.createdAt).toLocaleString()} ·{" "}
+                  {c.status === "unlocked"
+                    ? t.statusFull
+                    : c.status === "first_look"
+                      ? t.statusFree
+                      : c.status === "expired"
+                        ? t.statusHidden
+                        : t.statusDraft}
                 </p>
               </div>
               <span className="rounded-full border border-[var(--line)] px-3 py-1 text-xs">
-                {c.payload.brief?.verdict || (c.status === "first_look" ? "First look" : "Open")}
+                {c.payload.brief?.verdict ||
+                  (c.status === "first_look"
+                    ? t.statusFree
+                    : c.status === "unlocked"
+                      ? t.statusFull
+                      : t.statusDraft)}
               </span>
             </Link>
           </li>

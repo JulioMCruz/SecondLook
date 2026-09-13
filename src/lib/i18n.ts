@@ -74,7 +74,7 @@ export const messages = {
     gainPaid3: "The report emailed to you, plus time and cost on the file",
     gainPaidNote: "If pay fails or you cancel, the first look stays yours. Nothing paid is lost because nothing paid ran.",
     workflow: "How it works",
-    workflowTitle: "Six steps. You already have a file at step 03.",
+    workflowTitle: "Four steps. You already have a file at step 03.",
     walk: [
       {
         n: "01",
@@ -88,23 +88,13 @@ export const messages = {
       },
       {
         n: "03",
-        t: "First look — free",
-        d: "We search the live web, save the sources, and show what the pitch did not prove. You already have a file. You can stop here.",
+        t: "Free check",
+        d: "We search the live web and save it on your account: sources + what the pitch did not prove. You already have a file. You can stop here.",
       },
       {
         n: "04",
-        t: "Pay only if you want the full report",
-        d: "The second search and the written report stay locked. This demo uses a Test Store checkout. If pay fails, the first look remains yours.",
-      },
-      {
-        n: "05",
-        t: "Second look — paid",
-        d: "A second search hunts what the first pass missed. Then we write Fact, Hypothesis, or Unknown, and email the report to you.",
-      },
-      {
-        n: "06",
-        t: "It stays in Your receipts",
-        d: "Open it next week. Copy it. Print it. The next pitch does not start from zero.",
+        t: "Full report — only if you pay",
+        d: "A second search, a stamp (Fact, Hypothesis, or Unknown), and the report emailed to you. If pay fails, the free check stays yours.",
       },
     ],
     whoKicker: "Who it is for",
@@ -255,6 +245,24 @@ export const messages = {
     emailMe: "Email me this report",
     emailing: "Sending…",
     emailedJustNow: "Sent",
+    uxSteps: [
+      { n: "01", t: "Your sentence", d: "Say or type what they told you." },
+      { n: "02", t: "Free check", d: "Live web search, saved on your account." },
+      { n: "03", t: "Full report", d: "Pay to unlock. We email it." },
+    ],
+    uxHere: "now",
+    uxDone: "done",
+    uxNow1: "You are here: write the sentence, then run the free check.",
+    uxNow2run: "Searching the live web. This is still free.",
+    uxNow3: "Free check is on file. You can stop. Pay only if you want the written report.",
+    uxNowDone: "Full report is on file and emailed.",
+    uxHaveFile: "You already have a file",
+    uxHaveFileBody:
+      "Sources and what the pitch did not prove are saved. The written report stays locked until you pay.",
+    statusDraft: "Sentence",
+    statusFree: "Free check",
+    statusFull: "Full report",
+    statusHidden: "Hidden",
   },
   es: {
     metaTitle: "SecondLook — quédate el reporte",
@@ -303,7 +311,7 @@ export const messages = {
     gainPaidNote:
       "Si el pago falla o cancelas, la primera revisión sigue siendo tuya. No se pierde nada pagado porque no corrió nada pagado.",
     workflow: "Cómo funciona",
-    workflowTitle: "Seis pasos. Ya tienes un archivo en el paso 03.",
+    workflowTitle: "Cuatro pasos. Ya tienes un archivo en el paso 03.",
     walk: [
       {
         n: "01",
@@ -317,23 +325,13 @@ export const messages = {
       },
       {
         n: "03",
-        t: "Primera revisión — gratis",
-        d: "Buscamos en la web en vivo, guardamos las fuentes y mostramos lo que la venta no demostró. Ya tienes un archivo. Puedes parar aquí.",
+        t: "Revisión gratis",
+        d: "Buscamos en la web en vivo y lo guardamos en tu cuenta: fuentes + lo que la venta no demostró. Ya tienes un archivo. Puedes parar aquí.",
       },
       {
         n: "04",
-        t: "Paga solo si quieres el reporte completo",
-        d: "La segunda búsqueda y el reporte escrito quedan bloqueados. Esta demo usa un checkout de prueba. Si el pago falla, la primera revisión sigue siendo tuya.",
-      },
-      {
-        n: "05",
-        t: "Segunda revisión — de pago",
-        d: "Una segunda búsqueda caza lo que la primera no cerró. Luego escribimos Hecho, Hipótesis o Desconocido, y te mandamos el reporte por correo.",
-      },
-      {
-        n: "06",
-        t: "Queda en Tus recibos",
-        d: "Ábrelo la semana que viene. Cópialo. Imprímelo. El siguiente pitch no empieza de cero.",
+        t: "Reporte completo — solo si pagas",
+        d: "Una segunda búsqueda, un sello (Hecho, Hipótesis o Desconocido) y el reporte en tu correo. Si el pago falla, la revisión gratis sigue siendo tuya.",
       },
     ],
     whoKicker: "Para quién es",
@@ -484,6 +482,24 @@ export const messages = {
     emailMe: "Enviarme este reporte",
     emailing: "Enviando…",
     emailedJustNow: "Enviado",
+    uxSteps: [
+      { n: "01", t: "Tu frase", d: "Di o escribe lo que te dijeron." },
+      { n: "02", t: "Revisión gratis", d: "Búsqueda en la web, guardada en tu cuenta." },
+      { n: "03", t: "Reporte completo", d: "Paga para desbloquearlo. Te llega por correo." },
+    ],
+    uxHere: "aquí",
+    uxDone: "listo",
+    uxNow1: "Estás aquí: escribe la frase y corre la revisión gratis.",
+    uxNow2run: "Buscando en la web en vivo. Sigue siendo gratis.",
+    uxNow3: "La revisión gratis ya está en el archivo. Puedes parar. Paga solo si quieres el reporte escrito.",
+    uxNowDone: "El reporte completo está en el archivo y en tu correo.",
+    uxHaveFile: "Ya tienes un archivo",
+    uxHaveFileBody:
+      "Las fuentes y lo que la venta no demostró están guardados. El reporte escrito sigue bloqueado hasta que pagues.",
+    statusDraft: "Frase",
+    statusFree: "Revisión gratis",
+    statusFull: "Reporte completo",
+    statusHidden: "Oculto",
   },
 } as const;
 

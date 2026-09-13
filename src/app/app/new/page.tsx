@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useState } from "react";
 import CheckCanvas from "@/components/CheckCanvas";
 import PaywallButton from "@/components/PaywallButton";
+import ProcessGuide from "@/components/ProcessGuide";
 import VoiceListen from "@/components/VoiceListen";
 import { useT } from "@/components/LocaleProvider";
 import type { CheckRecord } from "@/lib/types";
@@ -123,6 +124,8 @@ function NewCheckInner() {
       <h1 className="sl-serif text-3xl font-medium tracking-tight">{t.newTitle}</h1>
       <p className="mt-1 text-sm text-[var(--muted)]">{t.newBody}</p>
 
+      <ProcessGuide check={check} running={running} />
+
       <VoiceListen
         value={claim}
         onTranscript={setClaim}
@@ -136,7 +139,8 @@ function NewCheckInner() {
             value={claim}
             onChange={(e) => setClaim(e.target.value)}
             rows={3}
-            className="mt-1 w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--green)]"
+            disabled={Boolean(running) || Boolean(check?.payload.firstLook)}
+            className="mt-1 w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--green)] disabled:opacity-70"
           />
         </label>
         <button
@@ -147,14 +151,21 @@ function NewCheckInner() {
         </button>
       </form>
 
-      <div className="mt-6">
-        <CheckCanvas check={check} running={running} />
-      </div>
+      {running || check ? (
+        <div className="mt-6">
+          <CheckCanvas check={check} running={running} />
+        </div>
+      ) : null}
 
       {check?.payload.firstLook ? (
-        <section className="mt-6 grid gap-4 md:grid-cols-2">
+        <section className="mt-6 space-y-4">
           <div className="rounded-2xl border border-[var(--line)] bg-white p-4">
-            <p className="text-xs uppercase tracking-wider text-[var(--muted)]">First look sources</p>
+            <p className="text-sm font-semibold">{t.uxHaveFile}</p>
+            <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{t.uxHaveFileBody}</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-[var(--line)] bg-white p-4">
+            <p className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.sources}</p>
             <ul className="mt-3 space-y-2 text-sm">
               {check.payload.firstLook.sources.slice(0, 5).map((s) => (
                 <li key={s.url}>
@@ -169,7 +180,7 @@ function NewCheckInner() {
           <div className="space-y-3">
             {check.payload.gap ? (
               <div className="rounded-2xl border border-dashed border-[var(--slot)] p-4">
-                <p className="text-xs uppercase tracking-wider text-[var(--muted)]">Gap (teaser)</p>
+                <p className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.gapTeaser}</p>
                 <p className="mt-2 text-sm font-medium">{check.payload.gap.label}</p>
                 <p className="mt-1 text-sm text-[var(--muted)]">{check.payload.gap.reason}</p>
               </div>
@@ -177,6 +188,7 @@ function NewCheckInner() {
             {userId ? (
               <PaywallButton appUserId={userId} email={email} onResult={afterPurchase} />
             ) : null}
+          </div>
           </div>
         </section>
       ) : null}

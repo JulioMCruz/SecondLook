@@ -26,10 +26,8 @@ The product is **Your receipts** (`/app`) — the folder, not the chat.
 
 1. Sign in (email + 6-digit code) or **Try the demo**.
 2. Say or type the sentence on `/app/new`.
-3. **First look (free):** live-web search → sources saved → what is missing, named.
-4. Paywall: RevenueCat Test Store. Pay only if you want the full report.
-5. **Second look (paid):** second search → written Fact / Hypothesis / Unknown → **email the report**.
-6. Report lives at `/app/[id]` and in the inbox. Open it next week. The folder grows.
+3. **Free check:** live-web search → sources saved → what is missing, named. You already have a file.
+4. **Full report (pay):** second search → Fact / Hypothesis / Unknown → **email the report**. If pay fails, the free check stays yours.
 
 ## Sponsors (cash tracks)
 
