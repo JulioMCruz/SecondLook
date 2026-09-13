@@ -1,53 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useT } from "@/components/LocaleProvider";
 import type { CheckRecord } from "@/lib/types";
 
-function reduceMotion() {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function useType(text: string, active: boolean, ms = 16) {
-  const [out, setOut] = useState("");
-  useEffect(() => {
-    if (!active) return;
-    if (reduceMotion()) {
-      setOut(text);
-      return;
-    }
-    setOut("");
-    let i = 0;
-    const id = window.setInterval(() => {
-      i += 1;
-      setOut(text.slice(0, i));
-      if (i >= text.length) window.clearInterval(id);
-    }, ms);
-    return () => window.clearInterval(id);
-  }, [text, active, ms]);
-  return out;
-}
-
 export default function BriefWrite({ check }: { check: CheckRecord }) {
   const { t } = useT();
   const brief = check.payload.brief;
-  const [showBody, setShowBody] = useState(false);
   const stamp =
     brief?.verdict === "Fact" ? t.fact : brief?.verdict === "Hypothesis" ? t.hypothesis : t.unknown;
-  const typed = useType(brief?.summary || "", showBody, 14);
-  const done = Boolean(brief) && showBody && typed.length >= (brief?.summary.length || 0);
-
-  useEffect(() => {
-    if (!brief) return;
-    if (reduceMotion()) {
-      setShowBody(true);
-      return;
-    }
-    const id = window.setTimeout(() => setShowBody(true), 700);
-    return () => window.clearTimeout(id);
-  }, [brief]);
+  const typed = brief?.summary || "";
+  const done = Boolean(brief);
 
   if (!brief) return null;
 

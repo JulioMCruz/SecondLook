@@ -35,6 +35,7 @@ export default function PaywallButton({ appUserId, email, onResult }: Props) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState(false);
   const ready = Boolean(process.env.NEXT_PUBLIC_REVENUECAT_TEST_STORE_API_KEY);
 
   const load = useCallback(async () => {
@@ -42,6 +43,7 @@ export default function PaywallButton({ appUserId, email, onResult }: Props) {
     setLoading(true); setError("");
     try {
       const purchases = ensureConfigured(appUserId);
+      setActive(await purchases.isEntitledTo(ENTITLEMENT));
       const offerings = await purchases.getOfferings();
       const pkg = offerings.current?.availablePackages[0] ?? null;
       setOffer(pkg);
@@ -61,6 +63,7 @@ export default function PaywallButton({ appUserId, email, onResult }: Props) {
     setError("");
     try {
       const purchases = ensureConfigured(appUserId);
+      if (active) { onResult({entitled:true,purchaseStatus:"success"}); return; }
       if (!offer) throw new Error("No Test Store package");
       await purchases.purchase({ rcPackage: offer, customerEmail: email });
       const entitled = await purchases.isEntitledTo(ENTITLEMENT);
@@ -105,10 +108,10 @@ export default function PaywallButton({ appUserId, email, onResult }: Props) {
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           onClick={buy}
-          disabled={busy || !offer}
+          disabled={busy || (!offer && !active)}
           className="rounded-full bg-[var(--green)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
         >
-          {busy ? t.payBusy : t.payBuy}
+          {busy ? t.payBusy : active ? (es ? "Continuar con mi acceso" : "Continue with my access") : t.payBuy}
         </button>
         <button
           onClick={failPurchase}

@@ -15,7 +15,7 @@ export async function runSearch(query: string, depth: "standard" | "deep"): Prom
     depth,
     outputType: "sourcedAnswer",
   });
-  const clean = (text: string) => text.replace(/&mdash;/g, "—").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/[#*_`]/g, "").trim();
+  const clean = (text: string) => text.replace(/&mdash;/g, "—").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&#(\d+);/g, (_, n) => { const c = Number(n); return c <= 0x10ffff ? String.fromCodePoint(c) : ""; }).replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/[#*_`]/g, "").trim();
   const seen = new Set<string>();
   const sources: SourceHit[] = (response.sources ?? []).filter(s => {
     try { const u = new URL(s.url); if (!["http:", "https:"].includes(u.protocol) || seen.has(u.href)) return false; seen.add(u.href); return true; } catch { return false; }

@@ -1,113 +1,23 @@
 "use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import type { CheckRecord } from "@/lib/types";
-import { LangSwitch, useT } from "@/components/LocaleProvider";
-
-export default function AppHome() {
-  const { t } = useT();
-  const router = useRouter();
-  const [checks, setChecks] = useState<CheckRecord[] | null>(null);
-  const [email, setEmail] = useState("");
-  const [keys, setKeys] = useState({ linkup: false, nebius: false, revenuecat: false });
-
-  useEffect(() => {
-    fetch("/api/auth/me")
-      .then(async (r) => {
-        if (!r.ok) {
-          router.push("/login");
-          return;
-        }
-        const data = await r.json();
-        setEmail(data.user.email);
-        setKeys(data.keys);
-      })
-      .catch(() => router.push("/login"));
-    fetch("/api/checks")
-      .then((r) => r.json())
-      .then((d) => setChecks(d.checks || []))
-      .catch(() => setChecks([]));
-  }, [router]);
-
-  async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/");
-  }
-
-  return (
-    <main className="mx-auto w-full max-w-5xl px-6 py-8">
-      <header className="flex items-center justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold">SecondLook</p>
-          <p className="text-xs text-[var(--muted)]">{email}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <LangSwitch />
-          <Link
-            href="/app/new"
-            className="rounded-full bg-[var(--green)] px-4 py-2 text-sm font-medium text-white"
-          >
-            {t.speakClaim}
-          </Link>
-          <button onClick={logout} className="text-sm text-[var(--muted)]">
-            {t.signOut}
-          </button>
-        </div>
-      </header>
-
-      {!keys.linkup || !keys.nebius || !keys.revenuecat ? (
-        <p className="mt-6 rounded-xl border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--muted)]">
-          {t.keysMissing}
-          {!keys.linkup ? " Linkup" : ""}
-          {!keys.nebius ? " Nebius" : ""}
-          {!keys.revenuecat ? " RevenueCat Test Store" : ""}.
-          {t.keysNeed}
-        </p>
-      ) : null}
-
-      <h1 className="mt-10 text-2xl font-semibold tracking-tight">{t.receipts}</h1>
-      <p className="mt-1 text-sm text-[var(--muted)]">{t.receiptsBody}</p>
-
-      <ul className="mt-6 space-y-3">
-        {checks === null ? <li className="text-sm text-[var(--muted)]">{t.loading}</li> : null}
-        {checks?.length === 0 ? (
-          <li className="rounded-2xl border border-dashed border-[var(--line)] px-5 py-10 text-sm text-[var(--muted)]">
-            {t.noChecks}
-          </li>
-        ) : null}
-        {checks?.map((c) => (
-          <li key={c.id}>
-            <Link
-              href={c.status === "unlocked" ? `/app/${c.id}` : `/app/new?id=${c.id}`}
-              className="flex items-center justify-between gap-4 rounded-2xl border border-[var(--line)] bg-white px-5 py-4"
-            >
-              <div>
-                <p className="font-medium">{c.claim}</p>
-                <p className="mt-1 text-xs text-[var(--muted)]">
-                  {new Date(c.createdAt).toLocaleString()} ·{" "}
-                  {c.status === "unlocked"
-                    ? t.statusFull
-                    : c.status === "first_look"
-                      ? t.statusFree
-                      : c.status === "expired"
-                        ? t.statusHidden
-                        : t.statusDraft}
-                </p>
-              </div>
-              <span className="rounded-full border border-[var(--line)] px-3 py-1 text-xs">
-                {c.payload.brief?.verdict ||
-                  (c.status === "first_look"
-                    ? t.statusFree
-                    : c.status === "unlocked"
-                      ? t.statusFull
-                      : t.statusDraft)}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </main>
-  );
+import {useRouter} from "next/navigation";
+import {useEffect,useState} from "react";
+import {ArrowUpRight,FileSearch,Plus,Search} from "lucide-react";
+import {LangSwitch,useT} from "@/components/LocaleProvider";
+import type {CheckRecord} from "@/lib/types";
+export default function AppHome(){
+  const {locale}=useT();const es=locale==="es";const router=useRouter();
+  const [checks,setChecks]=useState<CheckRecord[]|null>(null),[email,setEmail]=useState(""),[query,setQuery]=useState(""),[error,setError]=useState("");
+  useEffect(()=>{fetch("/api/auth/me").then(async r=>{if(!r.ok){router.push("/login");return;}setEmail((await r.json()).user.email);}).catch(()=>setError("Connection failed"));fetch("/api/checks").then(async r=>{if(!r.ok)throw Error("Could not load assessments");setChecks((await r.json()).checks||[]);}).catch(e=>setError(e.message));},[router]);
+  async function logout(){await fetch("/api/auth/logout",{method:"POST"});router.push("/");}
+  const visible=checks?.filter(c=>c.claim.toLowerCase().includes(query.toLowerCase()));
+  return <main className="min-h-screen bg-[#f5f6f3]"><header className="border-b border-[#dfe5df] bg-white"><div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-4"><Link href="/" className="flex items-center gap-2 text-sm font-semibold"><FileSearch size={20} className="text-[var(--green)]"/>SecondLook</Link><div className="flex items-center gap-5"><span className="hidden text-xs text-[var(--muted)] sm:inline">{email.endsWith("@secondlook.app") ? (es?"Sesión de demostración":"Demo session") : email}</span><LangSwitch/><button onClick={logout} className="text-xs text-[var(--muted)]">{es?"Salir":"Sign out"}</button></div></div></header>
+  <div className="mx-auto max-w-7xl px-6 py-10"><div className="flex flex-wrap items-start justify-between gap-5"><div><p className="text-[10px] font-semibold uppercase tracking-[.2em] text-[var(--green)]">{es?"EVALUACIÓN DE EVIDENCIA":"EVIDENCE WORKSPACE"}</p><h1 className="mt-2 text-3xl font-semibold tracking-tight">{es?"Tus evaluaciones":"Your assessments"}</h1><p className="mt-3 text-sm text-[var(--muted)]">{es?"Promesas, fuentes y decisiones. Un registro que puedes volver a consultar.":"Claims, sources and decisions. A record you can return to."}</p></div><Link href="/app/new" className="inline-flex items-center gap-2 rounded-lg bg-[var(--green)] px-5 py-3 text-sm font-medium text-white"><Plus size={16}/>{es?"Nueva evaluación":"New assessment"}</Link></div>
+  <div className="mt-8 grid grid-cols-3 gap-3">{[[es?"Evaluaciones":"Assessments",checks?.length],[es?"Con fuentes":"With sources",checks?.filter(c=>c.payload.firstLook).length],[es?"Expedientes completos":"Full briefs",checks?.filter(c=>c.payload.brief).length]].map(([label,n])=><div key={label} className="rounded-xl border border-[#dfe5df] bg-white p-5"><p className="text-2xl font-semibold">{n??"—"}</p><p className="mt-2 text-xs text-[var(--muted)]">{label}</p></div>)}</div>
+  <div className="mt-8 overflow-hidden rounded-2xl border border-[#dfe5df] bg-white"><div className="border-b border-[#e7ece7] p-4"><label className="flex max-w-md items-center gap-2 rounded-lg border border-[#dfe5df] bg-[#fafbf9] px-3 py-2"><Search size={16} className="text-[var(--muted)]"/><input aria-label={es?"Buscar evaluaciones":"Search assessments"} value={query} onChange={e=>setQuery(e.target.value)} placeholder={es?"Buscar una promesa…":"Search a claim…"} className="w-full bg-transparent text-sm outline-none"/></label></div>
+  {error&&<p role="alert" className="p-6 text-sm text-red-700">{error}</p>}
+  {!checks&&!error&&<p className="p-8 text-sm text-[var(--muted)]">{es?"Cargando evaluaciones…":"Loading assessments…"}</p>}
+  {visible?.length===0&&<div className="px-6 py-16 text-center"><FileSearch size={32} className="mx-auto text-[var(--green)]"/><h2 className="mt-4 text-lg font-semibold">{query?(es?"Sin coincidencias":"No matching assessments"):(es?"Tu próxima decisión empieza con una pregunta.":"Your next decision starts with a question.")}</h2><p className="mt-2 text-sm text-[var(--muted)]">{es?"Revisa una promesa comercial y conserva su evidencia.":"Check a sales claim and keep the evidence."}</p><Link href="/app/new" className="mt-5 inline-flex text-sm font-medium text-[var(--green)]">{es?"Iniciar una evaluación →":"Start an assessment →"}</Link></div>}
+  <ul>{visible?.map(c=><li key={c.id} className="border-b border-[#edf0eb] last:border-0"><Link href={`/app/new?id=${c.id}`} className="flex items-center justify-between gap-5 px-6 py-5 hover:bg-[#f8faf7]"><div className="min-w-0"><p className="text-sm font-medium leading-6">{c.claim}</p><p className="mt-2 text-xs text-[var(--muted)]">{new Date(c.createdAt).toLocaleDateString(locale)} · {c.payload.firstLook?.sources.length||0} {es?"fuentes":"sources"}</p></div><div className="flex shrink-0 items-center gap-3"><span className={`rounded-full px-3 py-1 text-[11px] ${c.payload.brief?"bg-emerald-50 text-emerald-800":"bg-[#f1f3ee] text-[var(--muted)]"}`}>{c.payload.brief?(es?"Completo":"Complete"):c.status==="expired"?(es?"Renovar acceso":"Renew access"):c.payload.firstLook?(es?"Primera revisión":"First look"):(es?"Borrador":"Draft")}</span><ArrowUpRight size={16}/></div></Link></li>)}</ul></div>
+  </div></main>;
 }

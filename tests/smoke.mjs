@@ -72,14 +72,14 @@ test("demo login sets a session", async () => {
   assert.equal(res.status, 200);
   assert.equal(json.ok, true);
   assert.ok(json.user?.id);
-  assert.equal(json.user.email, "judge@secondlook.app");
+  assert.match(json.user.email, /^demo-.*@secondlook\.app$/);
   assert.ok(cookies.has("sl_session"), "sl_session cookie");
 });
 
 test("me returns demo user", async () => {
   const { res, json } = await api("/api/auth/me");
   assert.equal(res.status, 200);
-  assert.equal(json.user.email, "judge@secondlook.app");
+  assert.match(json.user.email, /^demo-.*@secondlook\.app$/);
   assert.equal(json.keys.revenuecat, true);
 });
 

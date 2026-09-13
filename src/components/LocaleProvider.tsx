@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { detectLocale, langCookieName, messages, type Locale, type Messages } from "@/lib/i18n";
+import { langCookieName, messages, type Locale, type Messages } from "@/lib/i18n";
 
 type Ctx = {
   locale: Locale;
@@ -23,17 +23,6 @@ export default function LocaleProvider({
   children: React.ReactNode;
 }) {
   const [locale, setLocaleState] = useState<Locale>(initial);
-
-  useEffect(() => {
-    const match = document.cookie.match(new RegExp(`(?:^|; )${langCookieName()}=(en|es)`));
-    if (match?.[1] === "en" || match?.[1] === "es") {
-      if (match[1] !== locale) setLocaleState(match[1]);
-      return;
-    }
-    const detected = detectLocale(null, null, navigator.language || navigator.languages?.[0]);
-    setLocaleState(detected);
-    writeCookie(detected);
-  }, []);
 
   useEffect(() => {
     document.documentElement.lang = locale;

@@ -84,6 +84,7 @@ export async function sendBriefReport(input: {
   check: CheckRecord;
 }) {
   const key = process.env.RESEND_API_KEY;
+  if (isDemoInbox(input.to)) return {sent:false,copiedToNotify:false,to:input.to,error:"Demo session: report saved on screen. Sign in with email for delivery."};
   if (!key) {
     return { sent: false, copiedToNotify: false, to: input.to, error: "missing_key" as const };
   }
@@ -122,7 +123,6 @@ export async function sendBriefReport(input: {
 
   const resend = new Resend(key);
   const from = fromAddress();
-  const notify = notifyAddress();
 
   const primary = await resend.emails.send({
     from,
@@ -132,32 +132,11 @@ export async function sendBriefReport(input: {
     text: mail.text,
   });
 
-  let copiedToNotify = false;
-  let copyError: string | undefined;
-  const shouldCopy =
-    (isDemoInbox(input.to) || Boolean(primary.error)) &&
-    notify.toLowerCase() !== input.to.toLowerCase();
-
-  if (shouldCopy) {
-    const copySubject = isDemoInbox(input.to)
-      ? `${mail.subject} · demo ${input.to}`
-      : `${mail.subject} · undelivered ${input.to}`;
-    const copy = await resend.emails.send({
-      from,
-      to: notify,
-      subject: copySubject,
-      html: mail.html,
-      text: mail.text,
-    });
-    copiedToNotify = !copy.error;
-    copyError = copy.error?.message;
-  }
-
   return {
     sent: !primary.error,
-    copiedToNotify,
+    copiedToNotify: false,
     to: input.to,
-    error: primary.error?.message || copyError,
+    error: primary.error?.message,
   };
 }
 

@@ -66,7 +66,8 @@ function LoginForm() {
 
   useEffect(() => {
     if (params.get("demo") === "1") {
-      void demo();
+      const timer = window.setTimeout(() => void demo(), 0);
+      return () => window.clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -86,6 +87,8 @@ function LoginForm() {
       {stage === "email" ? (
         <form onSubmit={requestCode} className="mt-8 space-y-4">
           <input
+            aria-label="Email"
+            autoComplete="email"
             type="email"
             required
             value={email}
@@ -103,6 +106,10 @@ function LoginForm() {
       ) : (
         <form onSubmit={verify} className="mt-8 space-y-4">
           <input
+            aria-label={t.checkEmail}
+            autoComplete="one-time-code"
+            required
+            minLength={6}
             inputMode="numeric"
             pattern="[0-9]*"
             maxLength={6}
@@ -134,7 +141,7 @@ function LoginForm() {
       >
         {t.tryDemo}
       </button>
-      {error ? <p className="mt-4 text-sm text-red-700">{error}</p> : null}
+      {error ? <p role="alert" className="mt-4 text-sm text-red-700">{error}</p> : null}
     </main>
   );
 }

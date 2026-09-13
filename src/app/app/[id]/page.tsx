@@ -33,7 +33,7 @@ export default function BriefPage() {
   const locked = !brief || check.payload.entitlementActive === false;
 
   async function copy() {
-    if (!check || !brief) return;
+    if (!check || !brief || locked) return;
     await navigator.clipboard.writeText(
       `${check.claim}\n\n${brief.verdict}\n${brief.summary}\n`,
     );
@@ -56,13 +56,14 @@ export default function BriefPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-8">
+    <main className="mx-auto w-full max-w-5xl px-6 py-8">
       <div className="no-print mb-6 flex items-center justify-between">
         <Link href="/app" className="text-sm text-[var(--muted)]">
           {t.backReceipts}
         </Link>
         <div className="flex gap-2">
           <button
+            disabled={locked}
             onClick={copy}
             className="rounded-full border border-[var(--line)] px-4 py-2 text-sm"
           >

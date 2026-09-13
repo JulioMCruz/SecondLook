@@ -27,3 +27,19 @@ Experiencia sobria y trazable. No se afirma certificación, SOC 2, SSO, RBAC emp
 ## Video
 
 Regrabar el centro tras validar el recorrido. Mostrar una compra Test Store real, no una concesión artificial. Etiquetar test transactions. Reutilizar identidad HyperFrames y mantener el MP4 anterior como respaldo.
+
+## Checkpoint 2 — 13 septiembre, 22:35 UTC
+
+Implementado y comprobado:
+- Página de evaluaciones con búsqueda, estados y recuentos; navegación al mismo expediente.
+- Titular de brecha acotado, fuentes cerradas inicialmente y snippets limpiados.
+- Sesiones demo aisladas: cada juez tiene su propio usuario, sin compartir historial ni compras.
+- Oferta Monthly $9.99 de RevenueCat Test Store configurada en el proyecto SecondLook. Compra válida realizada en Chrome para Julio, entitlement confirmado en servidor y reporte generado. No se efectuó un cargo real.
+- Acceso existente permite continuar sin volver a comprar.
+- Citas mediante índices de pasajes: el servidor coloca el texto original. Se evita traducir accidentalmente una cita o aceptar texto inventado.
+- Revisión independiente de inferencias: los datos generales de un mercado no prueban ni refutan la conducta de los competidores desconocidos del usuario.
+- Cuatro casos reales EN/ES: propiedad de WhatsApp y adopción universal en Miami. Los cuatro alcanzan el estado esperado, con citas válidas. Es una muestra pequeña, no una medida de precisión general.
+- Informe por email exclusivamente al destinatario; se elimina el reenvío de mensajes fallidos al propietario. Las sesiones demo conservan el informe en pantalla.
+- Se eliminan esperas artificiales en componentes antiguos de fuentes/resumen y se respetan preferencias de movimiento.
+
+Pendiente antes de la entrega: fallo de compra en Chrome, prueba móvil, publicar versión, actualizar video y notas de entrega. El lint pasa con cinco advertencias existentes; build de OpenNext y TypeScript pasan.

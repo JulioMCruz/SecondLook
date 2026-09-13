@@ -1,12 +1,11 @@
-import { NextResponse } from "next/server";
-import { upsertUser } from "@/lib/db";
-import { setSessionCookie } from "@/lib/session";
-
-const DEMO_EMAIL = "judge@secondlook.app";
-const DEMO_ID = "usr_demo_judge";
+import {NextResponse} from "next/server";
+import {randomUUID} from "node:crypto";
+import {upsertUser} from "@/lib/db";
+import {setSessionCookie} from "@/lib/session";
 
 export async function POST() {
-  const user = await upsertUser(DEMO_ID, DEMO_EMAIL);
+  const id = randomUUID();
+  const user = await upsertUser(`usr_demo_${id}`, `demo-${id}@secondlook.app`);
   await setSessionCookie(user.id);
-  return NextResponse.json({ ok: true, user });
+  return NextResponse.json({ok:true,user});
 }

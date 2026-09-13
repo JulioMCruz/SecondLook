@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {loadTs} from './load-ts.mjs';
-const {parseEvidence,curateSources} = loadTs('src/lib/nebius.ts');
+const {parseEvidence,curateSources,resolvePassages} = loadTs('src/lib/nebius.ts');
 const source = {id:'F1',name:'Example',url:'https://example.com/proof',snippet:'The service launched in 2024 for selected customers.'};
 const base = {summary:'Evidence',findings:[{claim:'The service launched in 2024.',status:'supported',explanation:'Launch evidence.',evidence:[{sourceId:'F1',excerpt:'The service launched in 2024',relation:'supports'}],missingEvidence:[]}],questionsForSeller:['Which customers?']};
 test('exact source excerpt and source id retain supported finding',()=>{const b=parseEvidence(base,[source],'es');assert.equal(b.findings[0].status,'supported');assert.equal(b.locale,'es');});
@@ -13,3 +13,6 @@ const record = {status:'unlocked',userId:'u',payload:{firstLook:{sources:[]},bri
 test('API projection removes paid data without mutating stored record',()=>{const {publicCheck}=loadTs('src/lib/entitlements.ts');const safe=publicCheck(record,false);assert.equal(safe.payload.brief,undefined);assert.equal(safe.payload.followUp,undefined);assert.equal(safe.payload.metrics,undefined);assert.ok(safe.payload.firstLook);assert.ok(record.payload.brief);assert.equal(safe.status,'expired');});
 test('server entitlement checks expiration and rejects absent or invalid dates',async()=>{for(const [ent,expected] of [[undefined,false],[{expires_date:'2020-01-01'},false],[{expires_date:'bad'},false],[{expires_date:null},true],[{expires_date:'2099-01-01'},true]]){const {hasSecondLook}=loadTs('src/lib/entitlements.ts',{process:{env:{NEXT_PUBLIC_REVENUECAT_TEST_STORE_API_KEY:'test_unit'}},fetch:async()=>({ok:true,json:async()=>({subscriber:{entitlements:ent?{second_look:ent}:{}}})})});assert.equal(await hasSecondLook('user'),expected);}});
 test('verification provider failure does not grant access',async()=>{const {hasSecondLook}=loadTs('src/lib/entitlements.ts',{process:{env:{NEXT_PUBLIC_REVENUECAT_TEST_STORE_API_KEY:'test_unit'}},fetch:async()=>({ok:false})});await assert.rejects(()=>hasSecondLook('u'));});
+
+test('passage ids resolve original text regardless of report language',()=>{const raw={...base,findings:[{...base.findings[0],evidence:[{sourceId:'F1',passageIndex:0,relation:'supports',excerpt:'La traducción no debe usarse.'}]}]};const brief=parseEvidence(resolvePassages(raw,[source]),[source],'es');assert.equal(brief.findings[0].evidence[0].excerpt,source.snippet);assert.equal(brief.findings[0].status,'supported');});
+test('unknown passage cannot fabricate evidence',()=>{const raw={...base,findings:[{...base.findings[0],evidence:[{sourceId:'F1',passageIndex:99,relation:'supports'}]}]};assert.equal(parseEvidence(resolvePassages(raw,[source]),[source],'en').findings[0].status,'insufficient');});
