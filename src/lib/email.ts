@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { briefPdf } from "./brief-pdf";
 import { loginCodeEmail, briefReportEmail, contactAutoEmail, contactNotifyEmail } from "@/lib/email-templates";
 import type { Brief, CheckRecord } from "@/lib/types";
 import type { Locale } from "@/lib/i18n";
@@ -133,6 +134,7 @@ export async function sendBriefReport(input: {
     subject: mail.subject,
     html: mail.html,
     text: mail.text,
+    attachments: [{ filename: `secondlook-${input.check.id.slice(-8)}.pdf`, content: Buffer.from(briefPdf(input.check)) }],
   });
 
   return {

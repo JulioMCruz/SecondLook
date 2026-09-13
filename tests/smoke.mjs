@@ -67,6 +67,11 @@ test("checks require a session", async () => {
   assert.equal(json.error, "unauthorized");
 });
 
+test("PDF requires a session", async () => {
+  const { res } = await api("/api/checks/unknown/pdf");
+  assert.equal(res.status, 401);
+});
+
 test("demo login sets a session", async () => {
   const { res, json } = await api("/api/auth/demo", { method: "POST" });
   assert.equal(res.status, 200);
@@ -103,6 +108,11 @@ test("create a check", async () => {
   assert.equal(json.check.claim, CLAIM);
   checkId = json.check.id;
   assert.match(checkId, /^chk_/);
+});
+
+test("unpaid PDF is not disclosed", async () => {
+  const { res } = await api(`/api/checks/${checkId}/pdf`);
+  assert.equal(res.status, 402);
 });
 
 test("list includes the new check", async () => {

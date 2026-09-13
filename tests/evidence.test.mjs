@@ -16,3 +16,11 @@ test('verification provider failure does not grant access',async()=>{const {hasS
 
 test('passage ids resolve original text regardless of report language',()=>{const raw={...base,findings:[{...base.findings[0],evidence:[{sourceId:'F1',passageIndex:0,relation:'supports',excerpt:'La traducción no debe usarse.'}]}]};const brief=parseEvidence(resolvePassages(raw,[source]),[source],'es');assert.equal(brief.findings[0].evidence[0].excerpt,source.snippet);assert.equal(brief.findings[0].status,'supported');});
 test('unknown passage cannot fabricate evidence',()=>{const raw={...base,findings:[{...base.findings[0],evidence:[{sourceId:'F1',passageIndex:99,relation:'supports'}]}]};assert.equal(parseEvidence(resolvePassages(raw,[source]),[source],'en').findings[0].status,'insufficient');});
+
+
+test('PDF contains the finding, exact evidence and source URL',()=>{
+  const {briefPdf}=loadTs('src/lib/brief-pdf.ts');
+  const bytes=briefPdf({id:'chk_pdf_test',claim:'WhatsApp is owned by Meta.',updatedAt:'2026-09-13T22:00:00Z',payload:{brief:{summary:'Ownership review',locale:'en',findings:[{claim:'WhatsApp is owned by Meta.',status:'supported',explanation:'Confirmed by the source.',evidence:[{sourceId:'F1',excerpt:'Meta owns WhatsApp.'}],missingEvidence:[]}],questionsForSeller:['Who provides support?']},firstLook:{sources:[{id:'F1',name:'Official source',url:'https://example.com/ownership'}]}}});
+  const text=Buffer.from(bytes).toString('latin1');
+  assert.ok(text.startsWith('%PDF-')); assert.match(text,/Meta owns WhatsApp/); assert.match(text,/https:\/\/example.com\/ownership/); assert.match(text,/Who provides support/);
+});

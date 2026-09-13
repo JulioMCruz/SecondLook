@@ -1,5 +1,6 @@
 "use client";
 
+import BriefPreview from "@/components/BriefPreview";
 import { briefText } from "@/lib/brief-export";
 import EvidenceReport from "@/components/EvidenceReport";
 import Link from "next/link";
@@ -79,13 +80,7 @@ export default function BriefPage() {
           >
             {copied ? t.copied : t.copy}
           </button>
-          <button
-            disabled={locked}
-            onClick={() => window.print()}
-            className="rounded-full bg-[var(--green)] px-4 py-2 text-sm font-medium text-white"
-          >
-            {t.pdf}
-          </button>
+          {!locked && <BriefPreview check={check} demo={demoSession}/>}
         </div>
       </div>
 
