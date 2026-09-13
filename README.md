@@ -2,7 +2,7 @@
 
 **Before you buy, check the proof.**
 
-[Open the app](https://secondlook.juliomcruz.workers.dev) · [Watch the 66-second pitch](https://secondlook.juliomcruz.workers.dev/secondlook-pitch-v2.mp4) · [Try an isolated demo](https://secondlook.juliomcruz.workers.dev/login?demo=1)
+[Open the app](https://secondlook.juliomcruz.workers.dev) · [Watch the 60-second pitch](https://secondlook.juliomcruz.workers.dev/secondlook-pitch-v2.mp4) · [Try an isolated demo](https://secondlook.juliomcruz.workers.dev/login?demo=1)
 
 SecondLook helps small business owners evaluate a sales claim before committing to a purchase. It searches the live web, identifies missing evidence, and turns a targeted follow-up into a saved brief with source passages and questions for the seller. English and Spanish.
 
@@ -10,7 +10,7 @@ SecondLook helps small business owners evaluate a sales claim before committing 
 
 1. **Define the claim.** Paste or dictate what you were promised. The first assessment is free.
 2. **Investigate the evidence.** Linkup retrieves sources. Nebius identifies a specific gap and the next research question.
-3. **Prepare your response.** A RevenueCat Test Store purchase unlocks the follow-up and an evidence brief: supported, contradicted, or insufficient evidence. Inspect exact passages, copy questions, download Markdown, or print a PDF.
+3. **Prepare your response.** A RevenueCat Test Store purchase unlocks the follow-up and an evidence brief: supported, contradicted, or insufficient evidence. Inspect exact passages, copy questions, download Markdown, or preview and download an evidence PDF. Signed-in users can email the PDF as an attachment.
 
 For example, “All my competitors in Miami use AI on WhatsApp” requires a defined competitor set and adoption evidence. A vendor offering automation does not establish that claim. An unresolved finding is a useful result, with concrete proof to request next.
 

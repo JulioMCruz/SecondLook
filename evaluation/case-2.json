@@ -178,12 +178,12 @@
   },
   "brief": {
     "verdict": "Fact",
-    "summary": "Todas las fuentes revisadas confirman que WhatsApp es una subsidiaria de Meta Platforms (antes Facebook) desde su adquisición en 2014.",
+    "summary": "Todas las fuentes consultadas confirman que WhatsApp es una propiedad de Meta Platforms (antes Facebook). La adquisición se realizó en 2014 por alrededor de 19 mil millones de dólares y no hay evidencia que indique un cambio de titularidad posterior.",
     "findings": [
       {
         "claim": "WhatsApp pertenece a Meta.",
         "status": "supported",
-        "explanation": "Los artículos y comunicados de prensa citan explícitamente que Meta (antes Facebook) adquirió WhatsApp en 2014 y que la aplicación sigue bajo la propiedad de Meta. No se encontró evidencia que contradiga esta afirmación.",
+        "explanation": "Los documentos analizados indican que Meta Platforms es la empresa matriz de WhatsApp desde la adquisición anunciada y cerrada en febrero de 2014. No se encontró ninguna fuente que contradiga esta información. Las fuentes incluyen artículos de medios y el comunicado oficial de la adquisición, lo que brinda un contexto de fecha (2014) y confirma que la información proviene de operadores y reportes de prensa, no de vendedores.",
         "evidence": [
           {
             "sourceId": "F1",
@@ -201,8 +201,8 @@
             "relation": "supports"
           },
           {
-            "sourceId": "S11",
-            "excerpt": "The acquisition supports Facebook and WhatsApp&x27;s shared mission to bring more connectivity and utility to the world by delivering core internet services efficiently and affordably.",
+            "sourceId": "F6",
+            "excerpt": "WhatsApp appartient juridiquement à Meta Platforms, la société qui a remplacé Facebook Inc. à la suite du changement de nom annoncé en octobre 2021.",
             "relation": "supports"
           }
         ],
@@ -210,11 +210,11 @@
       }
     ],
     "questionsForSeller": [
-      "¿Puede proporcionar el comunicado de prensa oficial de Meta Platforms del 19 de febrero de 2014 que anuncia la adquisición de WhatsApp?",
-      "¿Existe un registro público (por ejemplo, presentación ante la SEC) que muestre la transferencia de acciones y el pago de $19 mil millones a los fundadores de WhatsApp?",
-      "¿Puede indicar la fecha exacta en que la propiedad de WhatsApp pasó de ser una entidad independiente a estar bajo la estructura corporativa de Meta Platforms?"
+      "¿Puede proporcionar el enlace al comunicado de prensa oficial de Meta Platforms sobre la adquisición de WhatsApp en febrero de 2014?",
+      "¿Existe alguna documentación que indique un cambio de titularidad de WhatsApp después de 2024?",
+      "¿Podría compartir evidencia de la estructura corporativa actual que muestre a WhatsApp como una subsidiaria de Meta Platforms?"
     ],
-    "whatChanged": "La segunda búsqueda aportó comunicados de prensa oficiales de Meta (fuentes S11 y S7) que confirman la adquisición de WhatsApp en febrero de 2014, reforzando la evidencia de propiedad con documentos corporativos.",
+    "whatChanged": "Se incorporaron fuentes con prefijo S (S1‑S12) que aportan información adicional, incluyendo el comunicado de prensa oficial de Meta (S7) y artículos en español (S1) que confirman la pertenencia de WhatsApp a Meta desde 2014.",
     "locale": "es",
     "facts": [
       "WhatsApp pertenece a Meta."
@@ -225,19 +225,21 @@
       "F1",
       "F2",
       "F3",
-      "S11"
+      "F6",
+      "S1",
+      "S7"
     ],
     "struggle": false
   },
   "metrics": {
-    "nebiousMs": 3541,
-    "promptTokens": 13656,
-    "completionTokens": 851,
-    "totalTokens": 14507,
-    "estimatedUsd": 0.00217605,
+    "nebiousMs": 5221,
+    "promptTokens": 13872,
+    "completionTokens": 1397,
+    "totalTokens": 15269,
+    "estimatedUsd": 0.00229035,
     "model": "openai/gpt-oss-120b"
   },
-  "totalMs": 3541,
+  "totalMs": 5223,
   "validCitations": true,
   "expectedPresent": true
 }

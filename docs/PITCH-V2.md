@@ -1,24 +1,43 @@
-# SecondLook pitch v2
+# SecondLook pitch — ElevenLabs final
 
-English · existing macOS Samantha narrator, 175 wpm.
+60 seconds. Voice: Tommy, Eleven Multilingual v2. Generated in the user’s ElevenLabs account on 2026-09-13. Playback 0.92×; a two-second pause holds the PDF preview. Captions aligned to Whisper word timestamps and corrected against the authored script.
 
-0–7s: Sales teams make confident promises. Small businesses need evidence before they commit. Meet SecondLook.
+0.40–2.29s: Sales teams make confident promises.
 
-7–16s: Paste a claim in English or Spanish. The first look searches the live web with Linkup.
+2.88–5.79s: Small businesses need evidence before they commit.
 
-16–26s: Nebius identifies the missing proof and proposes a targeted follow-up. Product availability does not prove that every competitor uses it.
+6.60–7.73s: Meet SecondLook.
 
-26–38s: RevenueCat runs the test checkout. A failed purchase keeps the first look intact. A valid test purchase unlocks further research.
+8.27–10.23s: Paste a claim in English or Spanish.
 
-38–49s: The server verifies access. Nebius builds findings with exact source passages, then checks whether those passages justify the conclusion.
+11.16–13.53s: The first look searches the live web with Linkup.
 
-49–59s: Here, the answer is insufficient evidence. Inspect the sources, ask the right questions, and keep the decision brief.
+13.99–18.23s: Nebius identifies the missing proof and proposes a targeted follow-up.
 
-59–66s: SecondLook. Before you buy, check the proof.
+18.53–22.81s: Product availability does not prove that every competitor uses it.
 
-## Delivery
+23.31–25.40s: RevenueCat runs the test checkout.
 
-66-second English pitch built in HyperFrames, using actual deployed UI captures. Both failed and successful RevenueCat Test Store purchases used the same assessment. No real charge. Original video retained as backup.
+26.23–28.40s: A failed purchase keeps the first look intact.
 
-Local video project: `/Users/zknexus/Projects/Hackathons/Burning-Token-26/secondlook-demo-video/edit/hyperframes`.
-Output target: `secondlook-demo-video/output/secondlook-pitch-v2.mp4`.
+29.18–31.70s: A valid test purchase unlocks further research.
+
+32.31–34.34s: The server verifies access.
+
+35.01–37.99s: Nebius builds findings with exact source passages,
+
+38.68–42.03s: then checks whether those passages justify the conclusion.
+
+42.81–44.70s: Here, the answer is insufficient evidence.
+
+45.49–47.75s: Inspect the sources and ask the right questions.
+
+48.62–50.16s: Preview your evidence PDF,
+
+51.07–52.10s: then send it to your inbox.
+
+55.01–57.36s: SecondLook. Before you buy, check the proof.
+
+Visual direction: the closing capture shows the PDF preview only, as requested. No email inbox or delivery confirmation is shown. Email delivery remains a real app feature.
+
+Video: `public/secondlook-pitch-v2.mp4`. Editable source: `docs/pitch`. Captions: `docs/pitch/captions.srt`.

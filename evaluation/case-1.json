@@ -178,31 +178,26 @@
   },
   "brief": {
     "verdict": "Fact",
-    "summary": "All examined sources consistently state that WhatsApp is a wholly‑owned subsidiary of Meta Platforms, Inc., the company formerly known as Facebook. The acquisition occurred in 2014 and the ownership remains in effect through 2026.",
+    "summary": "All examined sources consistently state that WhatsApp is a wholly‑owned subsidiary of Meta Platforms, Inc., the company that acquired it in 2014. No source contradicts this ownership claim.",
     "findings": [
       {
         "claim": "WhatsApp is owned by Meta.",
         "status": "supported",
-        "explanation": "Multiple independent sources describe WhatsApp as a wholly‑owned subsidiary of Meta Platforms, Inc., confirming the claim. The ownership dates back to the 2014 acquisition and is still reflected in recent corporate filings and company descriptions.",
+        "explanation": "Multiple independent sources, including recent 2026 corporate filings and ownership breakdowns, confirm that WhatsApp operates as a wholly‑owned subsidiary of Meta Platforms, Inc. The acquisition occurred in 2014 and the ownership structure has remained unchanged.",
         "evidence": [
           {
-            "sourceId": "F1",
-            "excerpt": "If you're wondering who owns WhatsApp, the answer is straightforward: Meta Platforms, Inc. (formerly Facebook, Inc.) has owned the messaging service since 2014.",
+            "sourceId": "S2",
+            "excerpt": "WhatsApp is owned by Meta Platforms, Inc., the Nasdaq-listed American company that bought it in 2014.",
             "relation": "supports"
           },
           {
-            "sourceId": "F3",
-            "excerpt": "TL;DR: WhatsApp is owned by Meta Platforms, Inc., the company formerly known as Facebook.",
+            "sourceId": "S1",
+            "excerpt": "WhatsApp itself has no separate ownership structure — it operates as a wholly owned subsidiary within Meta Platforms, Inc., alongside Facebook, Instagram, and Meta’s various AI and virtual-reality ventures.",
             "relation": "supports"
           },
           {
-            "sourceId": "S7",
-            "excerpt": "Meta owns and operates several prominent social media platforms and communication services, including Facebook, Instagram, WhatsApp, Messenger, and Threads.",
-            "relation": "supports"
-          },
-          {
-            "sourceId": "S12",
-            "excerpt": "WhatsApp joined Meta in February 2014 through a $19 billion acquisition that remains one of the largest tech purchases ever.",
+            "sourceId": "F2",
+            "excerpt": "Meta Platforms, formerly Facebook Inc., is the parent company that owns WhatsApp.",
             "relation": "supports"
           }
         ],
@@ -210,11 +205,11 @@
       }
     ],
     "questionsForSeller": [
-      "Can you provide the specific section of Meta’s 2026 Form 10‑K that lists WhatsApp as a subsidiary or part of the Family of Apps?",
-      "Do you have a copy of the Delaware filing for WhatsApp LLC that shows Meta Platforms, Inc. as the sole member/owner?",
-      "Is there any recent (2025‑2026) shareholder communication or proxy statement that explicitly confirms Meta’s 100 % ownership of WhatsApp?"
+      "Can you provide the official 2026 Form 10‑K filing that lists WhatsApp as a subsidiary of Meta Platforms, Inc.?",
+      "What is the exact legal entity name (e.g., WhatsApp LLC) and jurisdiction of incorporation for WhatsApp under Meta?",
+      "Do you have any documentation confirming that the ownership has not changed since the 2014 acquisition (e.g., recent shareholder reports or SEC filings)?"
     ],
-    "whatChanged": "The follow‑up query for Meta Platforms 2026 Form 10‑K did not uncover any contradictory information; instead it reinforced the same ownership relationship, showing WhatsApp listed among Meta’s Family of Apps in the 2026 filing.",
+    "whatChanged": "The follow‑up search added the S‑prefixed sources (S1‑S12). These newer sources provide 2026 Form 10‑K and other recent corporate documents that reaffirm Meta’s ownership of WhatsApp, strengthening the evidence base. No previously requested source failed to resolve.",
     "locale": "en",
     "facts": [
       "WhatsApp is owned by Meta."
@@ -222,22 +217,21 @@
     "hypotheses": [],
     "unknowns": [],
     "where": [
-      "F1",
-      "F3",
-      "S7",
-      "S12"
+      "S2",
+      "S1",
+      "F2"
     ],
     "struggle": false
   },
   "metrics": {
-    "nebiousMs": 4394,
-    "promptTokens": 14145,
-    "completionTokens": 891,
-    "totalTokens": 15036,
-    "estimatedUsd": 0.0022554,
+    "nebiousMs": 4669,
+    "promptTokens": 14296,
+    "completionTokens": 1162,
+    "totalTokens": 15458,
+    "estimatedUsd": 0.0023187,
     "model": "openai/gpt-oss-120b"
   },
-  "totalMs": 4394,
+  "totalMs": 4670,
   "validCitations": true,
   "expectedPresent": true
 }

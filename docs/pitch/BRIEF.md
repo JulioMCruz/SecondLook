@@ -1,10 +1,9 @@
-# SecondLook pitch v2
+# SecondLook final pitch brief
 
-Workflow: product-launch-video, edit existing project. Autonomous sprint approved by user.
-66 seconds, 1920×1080, English. Existing macOS Samantha narration retained; no music added. Clean enterprise product demonstration.
+Workflow: product-launch-video, edit existing project. Autonomous sprint requested by user.
 
-Actual Chrome captures from the deployed application, using one isolated demo account. Failed and successful RevenueCat Test Store purchases were performed in the same assessment. Zero real charge. UI captures are edited stills, not simulated live interactions; do not imply continuous real-time footage.
+60 seconds, 1920×1080, English. ElevenLabs Tommy / Multilingual v2. Actual deployed product captures, edited into seven scenes. Word-aligned captions. No music.
 
-Narrative: business risk → free search → specific evidence gap → purchase failure and success → cited findings → questions for the seller → CTA. No claims of broad accuracy, enterprise certification, real revenue or universal adoption.
+Show the claim, free research gap, real RevenueCat Test Store failure and success, exact evidence excerpts, and a generated PDF preview. The closing scene shows only the PDF preview, with no inbox or email confirmation, per the user’s final direction.
 
-Prior index and script retained in backups. Original output/secondlook-demo.mp4 remains untouched. Deliver output/secondlook-pitch-v2.mp4.
+Do not imply a continuous live recording, real charges, guaranteed truth, SOC 2, SSO or an enterprise SLA. Preserve original video separately.

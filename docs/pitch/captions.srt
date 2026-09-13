@@ -1,0 +1,71 @@
+1
+00:00:00,400 --> 00:00:02,441
+Sales teams make confident promises.
+
+2
+00:00:02,878 --> 00:00:05,941
+Small businesses need evidence before they commit.
+
+3
+00:00:06,596 --> 00:00:07,876
+Meet SecondLook.
+
+4
+00:00:08,270 --> 00:00:10,376
+Paste a claim in English or Spanish.
+
+5
+00:00:11,161 --> 00:00:13,680
+The first look searches the live web with Linkup.
+
+6
+00:00:13,987 --> 00:00:18,376
+Nebius identifies the missing proof and proposes a targeted follow-up.
+
+7
+00:00:18,530 --> 00:00:22,963
+Product availability does not prove that every competitor uses it.
+
+8
+00:00:23,313 --> 00:00:25,550
+RevenueCat runs the test checkout.
+
+9
+00:00:26,226 --> 00:00:28,550
+A failed purchase keeps the first look intact.
+
+10
+00:00:29,183 --> 00:00:31,854
+A valid test purchase unlocks further research.
+
+11
+00:00:32,313 --> 00:00:34,485
+The server verifies access.
+
+12
+00:00:35,009 --> 00:00:38,137
+Nebius builds findings with exact source passages,
+
+13
+00:00:38,683 --> 00:00:42,180
+then checks whether those passages justify the conclusion.
+
+14
+00:00:42,813 --> 00:00:44,854
+Here, the answer is insufficient evidence.
+
+15
+00:00:45,487 --> 00:00:47,898
+Inspect the sources and ask the right questions.
+
+16
+00:00:48,617 --> 00:00:50,311
+Preview your evidence PDF,
+
+17
+00:00:51,074 --> 00:00:52,246
+then send it to your inbox.
+
+18
+00:00:55,009 --> 00:00:57,657
+SecondLook. Before you buy, check the proof.

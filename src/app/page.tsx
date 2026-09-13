@@ -7,11 +7,12 @@ import ProcessRail from "@/components/landing/ProcessRail";
 import { LangSwitch, useT } from "@/components/LocaleProvider";
 
 export default function HomePage() {
-  const { t } = useT();
+  const { t, locale } = useT();
+  const es = locale === "es";
   const stamps = [
-    { k: t.fact, d: t.stampFact },
-    { k: t.hypothesis, d: t.stampHyp },
-    { k: t.unknown, d: t.stampUnk },
+    { k: es ? "Respaldado" : "Supported", d: t.stampFact },
+    { k: es ? "Contradicho" : "Contradicted", d: t.stampHyp },
+    { k: es ? "Evidencia insuficiente" : "Insufficient evidence", d: t.stampUnk },
   ];
 
   return (
@@ -192,7 +193,7 @@ export default function HomePage() {
           {stamps.map((row, i) => (
             <div
               key={row.k}
-              className={`grid gap-2 px-5 py-5 md:grid-cols-[9rem_1fr] md:items-baseline ${
+              className={`grid gap-2 px-5 py-5 md:grid-cols-[12rem_1fr] md:items-baseline ${
                 i !== 0 ? "border-t border-[var(--line)]" : ""
               }`}
             >
