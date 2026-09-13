@@ -101,6 +101,12 @@ export default function VoiceListen({ value, onTranscript, disabled }: Props) {
       setLive("");
       return;
     }
+    const raw = (data.raw || "").trim();
+    if (raw && raw !== data.claim) {
+      setLive(raw);
+      setMeta(`${t.heardRaw} → ${t.polishedLine}`);
+      await new Promise((r) => setTimeout(r, 700));
+    }
     onTranscript(data.claim);
     setLive(data.claim);
     setMeta(`Nebius ${data.sttModel || "STT"} → ${data.polishModel || "brief model"}`);
@@ -133,7 +139,7 @@ export default function VoiceListen({ value, onTranscript, disabled }: Props) {
         if (e.data.size) chunksRef.current.push(e.data);
       };
       rec.onerror = () => {
-        setErr("Recorder failed. Type the claim.");
+        setErr(t.voiceFail);
         setStatus("idle");
         stopAll();
       };
@@ -178,7 +184,16 @@ export default function VoiceListen({ value, onTranscript, disabled }: Props) {
         ))}
       </div>
 
-      <p className="sl-serif sl-voice-line">{display}</p>
+      <p className="sl-serif sl-voice-line">
+        {live && status === "idle" && value && live !== value ? (
+          <>
+            <span className="text-[var(--muted)] line-through">{live}</span>
+            <span className="mt-1 block">{value}</span>
+          </>
+        ) : (
+          display || t.voiceHintIdle
+        )}
+      </p>
       <p className="sl-voice-hint">
         {listening ? t.voiceHintListen : working ? t.voiceHintWork : t.voiceHintIdle}
       </p>

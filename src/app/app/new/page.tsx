@@ -6,6 +6,8 @@ import { FormEvent, Suspense, useEffect, useState } from "react";
 import CheckCanvas from "@/components/CheckCanvas";
 import PaywallButton from "@/components/PaywallButton";
 import ProcessGuide from "@/components/ProcessGuide";
+import SourceStage from "@/components/SourceStage";
+import BriefWrite from "@/components/BriefWrite";
 import VoiceListen from "@/components/VoiceListen";
 import { useT } from "@/components/LocaleProvider";
 import type { CheckRecord } from "@/lib/types";
@@ -15,7 +17,7 @@ function NewCheckInner() {
   const router = useRouter();
   const params = useSearchParams();
   const existingId = params.get("id");
-  const [claim, setClaim] = useState<string>(t.sampleClaim);
+  const [claim, setClaim] = useState("");
   const [check, setCheck] = useState<CheckRecord | null>(null);
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
@@ -105,7 +107,6 @@ function NewCheckInner() {
       return;
     }
     setCheck(data.check);
-    router.push(`/app/${data.check.id}`);
   }
 
   return (
@@ -134,13 +135,14 @@ function NewCheckInner() {
           <textarea
             value={claim}
             onChange={(e) => setClaim(e.target.value)}
+            placeholder={t.sampleClaim}
             rows={3}
             disabled={Boolean(running) || Boolean(check?.payload.firstLook)}
             className="mt-1 w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--green)] disabled:opacity-70"
           />
         </label>
         <button
-          disabled={Boolean(running) || check?.status === "first_look"}
+          disabled={Boolean(running) || check?.status === "first_look" || claim.trim().length < 8}
           className="rounded-full bg-[var(--green)] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60"
         >
           {running ? t.lookingUp : check?.payload.firstLook ? t.firstSaved : t.runFirst}
@@ -153,40 +155,31 @@ function NewCheckInner() {
         </div>
       ) : null}
 
-      {check?.payload.firstLook ? (
+      {running === "01" || check?.payload.firstLook ? (
         <section className="mt-6 space-y-4">
-          <div className="rounded-2xl border border-[var(--line)] bg-white p-4">
-            <p className="text-sm font-semibold">{t.uxHaveFile}</p>
-            <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{t.uxHaveFileBody}</p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-[var(--line)] bg-white p-4">
-            <p className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.sources}</p>
-            <ul className="mt-3 space-y-2 text-sm">
-              {check.payload.firstLook.sources.slice(0, 5).map((s) => (
-                <li key={s.url}>
-                  <a href={s.url} className="underline" target="_blank" rel="noreferrer">
-                    {s.name}
-                  </a>
-                  <p className="text-xs text-[var(--muted)]">{s.snippet.slice(0, 140)}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="space-y-3">
-            {check.payload.gap ? (
-              <div className="rounded-2xl border border-dashed border-[var(--slot)] p-4">
-                <p className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.gapTeaser}</p>
-                <p className="mt-2 text-sm font-medium">{check.payload.gap.label}</p>
-                <p className="mt-1 text-sm text-[var(--muted)]">{check.payload.gap.reason}</p>
+          <SourceStage
+            sources={check?.payload.firstLook?.sources || []}
+            gap={check?.payload.gap}
+            searching={running === "01"}
+          />
+          {check?.payload.firstLook && running !== "03" && !check.payload.brief ? (
+            <div className="space-y-3">
+              <div className="rounded-2xl border border-[var(--line)] bg-white p-4">
+                <p className="text-sm font-semibold">{t.uxHaveFile}</p>
+                <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{t.uxHaveFileBody}</p>
               </div>
-            ) : null}
-            {userId ? (
-              <PaywallButton appUserId={userId} email={email} onResult={afterPurchase} />
-            ) : null}
-          </div>
-          </div>
+              {userId ? (
+                <PaywallButton appUserId={userId} email={email} onResult={afterPurchase} />
+              ) : null}
+            </div>
+          ) : null}
         </section>
+      ) : null}
+
+      {check?.payload.brief ? <BriefWrite check={check} /> : null}
+
+      {running === "03" && !check?.payload.brief ? (
+        <p className="mt-6 sl-serif text-lg">{t.nebiusWrites}…</p>
       ) : null}
 
       {error ? <p className="mt-4 text-sm text-red-700">{error}</p> : null}
