@@ -58,7 +58,7 @@ function NewCheckInner() {
     const createdData = await created.json();
     if (!created.ok) {
       setRunning(null);
-      setError(createdData.error || "Could not create check");
+      setError(createdData.error || t.createFail);
       return;
     }
     setCheck(createdData.check);
@@ -69,7 +69,7 @@ function NewCheckInner() {
     const data = await res.json();
     setRunning(null);
     if (!res.ok) {
-      setError(data.error || "First look failed");
+      setError(data.error || t.firstFail);
       return;
     }
     setCheck(data.check);
@@ -89,11 +89,7 @@ function NewCheckInner() {
       });
       const data = await res.json();
       if (data.check) setCheck(data.check);
-      setError(
-        result.purchaseStatus === "cancel"
-          ? "Purchase cancelled. Follow-up stays locked."
-          : "Purchase failed. Follow-up stays locked.",
-      );
+      setError(result.purchaseStatus === "cancel" ? t.payCancelled : t.payFailed);
       return;
     }
     setRunning("03");
@@ -105,7 +101,7 @@ function NewCheckInner() {
     const data = await res.json();
     setRunning(null);
     if (!res.ok) {
-      setError(data.error || "Unlock failed");
+      setError(data.error || t.unlockFail);
       return;
     }
     setCheck(data.check);

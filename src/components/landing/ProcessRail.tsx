@@ -8,13 +8,13 @@ import { useT } from "@/components/LocaleProvider";
 type Phase = "idle" | "running" | "done" | "locked";
 
 function phasesForTick(tick: number): Phase[] {
-  if (tick <= 0) return ["idle", "idle", "locked", "locked", "locked"];
-  if (tick === 1) return ["running", "idle", "locked", "locked", "locked"];
-  if (tick === 2) return ["done", "running", "locked", "locked", "locked"];
-  if (tick === 3) return ["done", "done", "locked", "locked", "locked"];
-  if (tick === 4) return ["done", "done", "running", "locked", "locked"];
-  if (tick === 5) return ["done", "done", "done", "running", "locked"];
-  return ["done", "done", "done", "done", "done"];
+  if (tick <= 0) return ["idle", "idle", "idle", "locked"];
+  if (tick === 1) return ["running", "idle", "idle", "locked"];
+  if (tick === 2) return ["done", "running", "idle", "locked"];
+  if (tick === 3) return ["done", "done", "running", "locked"];
+  if (tick === 4) return ["done", "done", "done", "locked"];
+  if (tick === 5) return ["done", "done", "done", "running"];
+  return ["done", "done", "done", "done"];
 }
 
 export default function ProcessRail() {
@@ -54,7 +54,7 @@ export default function ProcessRail() {
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             style={{ width: "calc(100% - 4rem)" }}
           />
-          <ol className="grid gap-3 md:grid-cols-5">
+          <ol className="grid gap-3 md:grid-cols-4">
             {STEPS.map((step, i) => {
               const phase = phases[i];
               const active = phase === "running";

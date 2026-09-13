@@ -63,7 +63,7 @@ export default function AppHome() {
           {!keys.linkup ? " Linkup" : ""}
           {!keys.nebius ? " Nebius" : ""}
           {!keys.revenuecat ? " RevenueCat Test Store" : ""}.
-          First look and unlock need the matching env vars.
+          {t.keysNeed}
         </p>
       ) : null}
 

@@ -86,7 +86,11 @@ export default function BriefPage() {
       ) : (
         <article className="mt-6 space-y-5 rounded-2xl border border-[var(--line)] bg-white p-6">
           <p className="text-sm font-semibold uppercase tracking-wider text-[var(--green)]">
-            {brief.verdict}
+            {brief.verdict === "Fact"
+              ? t.fact
+              : brief.verdict === "Hypothesis"
+                ? t.hypothesis
+                : t.unknown}
           </p>
           <p className="leading-7">{brief.summary}</p>
           {brief.facts.length ? (
@@ -101,7 +105,7 @@ export default function BriefPage() {
           ) : null}
           {brief.hypotheses.length ? (
             <section>
-              <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">Hypotheses</h2>
+              <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.hypotheses}</h2>
               <ul className="mt-2 list-disc pl-5 text-sm leading-6">
                 {brief.hypotheses.map((f) => (
                   <li key={f}>{f}</li>
@@ -111,7 +115,7 @@ export default function BriefPage() {
           ) : null}
           {brief.unknowns.length ? (
             <section>
-              <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">Unknowns</h2>
+              <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.unknowns}</h2>
               <ul className="mt-2 list-disc pl-5 text-sm leading-6">
                 {brief.unknowns.map((f) => (
                   <li key={f}>{f}</li>
@@ -121,7 +125,7 @@ export default function BriefPage() {
           ) : null}
           {brief.where.length ? (
             <section>
-              <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">Where</h2>
+              <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.whereLabel}</h2>
               <ul className="mt-2 list-disc pl-5 text-sm leading-6">
                 {brief.where.map((f) => (
                   <li key={f}>{f}</li>
@@ -131,7 +135,7 @@ export default function BriefPage() {
           ) : null}
           {brief.struggle ? (
             <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm">
-              Struggle case: {brief.struggleNote || "The product could not close this claim."}
+              {t.struggle}: {brief.struggleNote || t.struggleFallback}
             </p>
           ) : null}
 
@@ -161,8 +165,8 @@ export default function BriefPage() {
       )}
 
       <section className="mt-8 space-y-3 text-sm">
-        <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">Sources</h2>
-        <p className="text-xs text-[var(--muted)]">Search 1 (Linkup)</p>
+        <h2 className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.sourcesHeading}</h2>
+        <p className="text-xs text-[var(--muted)]">{t.searchFree}</p>
         <ul className="space-y-1">
           {check.payload.firstLook?.sources.map((s) => (
             <li key={s.url}>
@@ -174,7 +178,7 @@ export default function BriefPage() {
         </ul>
         {check.payload.followUp ? (
           <>
-            <p className="pt-3 text-xs text-[var(--muted)]">Search 2 follow-up (Linkup)</p>
+            <p className="pt-3 text-xs text-[var(--muted)]">{t.searchPaid}</p>
             <ul className="space-y-1">
               {check.payload.followUp.sources.map((s) => (
                 <li key={s.url}>
