@@ -150,6 +150,41 @@ export default function HomePage() {
         <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)]">{t.whoBody2}</p>
       </section>
 
+      <section id="stories" className="mx-auto max-w-5xl px-6 py-8 md:py-12">
+        <p className="text-sm text-[var(--muted)]">{t.storiesKicker}</p>
+        <h2 className="sl-serif mt-2 max-w-2xl text-3xl font-medium tracking-tight md:text-4xl">
+          {t.storiesTitle}
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">{t.storiesFoot}</p>
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          {t.stories.map((story) => (
+            <article
+              key={story.who}
+              className="rounded-2xl border border-[var(--line)] bg-white p-6"
+              data-sl-reveal
+            >
+              <p className="font-mono text-[10px] tracking-widest text-[var(--muted)]">{story.where}</p>
+              <h3 className="sl-serif mt-2 text-2xl font-medium">{story.who}</h3>
+              <p className="mt-4 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+                {t.storiesHeard}
+              </p>
+              <p className="mt-1 text-base font-medium leading-6">“{story.heard}”</p>
+              <p className="mt-5 text-[10px] font-semibold uppercase tracking-wider text-[var(--green)]">
+                {story.stamp}
+              </p>
+              <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
+                <span className="font-medium text-[var(--ink)]">{t.storiesFile}. </span>
+                {story.file}
+              </p>
+              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                <span className="font-medium text-[var(--ink)]">{t.storiesNext}. </span>
+                {story.next}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="mx-auto max-w-5xl px-6 py-8 md:py-12" data-sl-reveal>
         <p className="text-sm text-[var(--muted)]">{t.stampsKicker}</p>
         <h2 className="sl-serif mt-2 text-3xl font-medium tracking-tight">{t.stampsTitle}</h2>
