@@ -219,7 +219,7 @@ export const messages = {
     payFailed: "Purchase failed. The full report stays locked.",
     payTitle: "Unlock the full report",
     payBody:
-      "Test checkout. The second search and the written report stay locked until you pay. Test buy still emails the report.",
+      "Includes targeted follow-up research, cited findings and questions for your next conversation. Test Store only: no real charge.",
     payOffer: "Offer",
     payLoading: "Loading the test offer…",
     payBuy: "Test purchase",
@@ -473,7 +473,7 @@ export const messages = {
     payFailed: "La compra falló. El reporte completo sigue bloqueado.",
     payTitle: "Desbloquear el reporte completo",
     payBody:
-      "Checkout de prueba. La segunda búsqueda y el reporte escrito siguen bloqueados hasta que pagues. Una compra de prueba igual manda el reporte por correo.",
+      "Incluye investigación dirigida, hallazgos con citas y preguntas para tu próxima conversación. Solo Test Store: sin cargo real.",
     payOffer: "Oferta",
     payLoading: "Cargando la oferta de prueba…",
     payBuy: "Compra de prueba",

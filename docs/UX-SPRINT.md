@@ -28,7 +28,7 @@ Experiencia sobria y trazable. No se afirma certificación, SOC 2, SSO, RBAC emp
 
 Regrabar el centro tras validar el recorrido. Mostrar una compra Test Store real, no una concesión artificial. Etiquetar test transactions. Reutilizar identidad HyperFrames y mantener el MP4 anterior como respaldo.
 
-## Checkpoint 2 — 13 septiembre, 22:35 UTC
+## Checkpoint 2 — 13 septiembre, 22:27 UTC
 
 Implementado y comprobado:
 - Página de evaluaciones con búsqueda, estados y recuentos; navegación al mismo expediente.
@@ -43,3 +43,30 @@ Implementado y comprobado:
 - Se eliminan esperas artificiales en componentes antiguos de fuentes/resumen y se respetan preferencias de movimiento.
 
 Pendiente antes de la entrega: fallo de compra en Chrome, prueba móvil, publicar versión, actualizar video y notas de entrega. El lint pasa con cinco advertencias existentes; build de OpenNext y TypeScript pasan.
+
+## Validación y ajustes posteriores
+
+- Compra fallida y compra válida probadas en la app publicada con el mismo expediente y usuario demo. El fallo conservó la primera revisión; el éxito produjo el informe tras verificar RevenueCat en servidor.
+- Prueba móvil a 390 × 844: sin desbordamiento horizontal. El resumen se adelanta a los metadatos cuando existe un informe.
+- Corregido contraste de enlaces: una regla CSS global anulaba el blanco de los botones con fondo verde. Se movió a la capa base y se agregó foco visible.
+- Descarga Markdown con hallazgos, citas, enlaces y preguntas; copia completa y PDF mediante impresión.
+- El correo del reporte contiene hallazgos y preguntas, con citas originales. Las demos ofrecen descarga en lugar de intentar enviar a direcciones ficticias.
+- Errores de red recuperables en login y reporte, estado de carga que termina al fallar, límite de reenvío de correo.
+- El listado transmite resúmenes, sin descargar los extractos completos de todas las evaluaciones.
+- Se retira el botón artificial «Simulate fail» del flujo del producto; el fallo se prueba dentro del SDK de Test Store.
+
+## Backlog tras la presentación
+
+1. Definir segmentos/competidores antes de investigar afirmaciones universales; pedir datos opcionales sin inventarlos.
+2. Añadir un benchmark más amplio y revisión humana de inferencias; cuatro casos no bastan para afirmar precisión.
+3. Evaluar la calidad y actualidad de fuentes, priorizando documentos primarios frente a marketing.
+4. Dominio de envío verificado para acceso por email de cualquier destinatario. Por ahora se mantiene el remitente de pruebas de Resend.
+5. Planes/límites de uso, equipos y permisos solo tras diseñarlos e implementarlos; no anunciarlos como capacidades actuales.
+
+## Entregables del sprint
+
+- Video v2: 66 segundos, H.264/AAC, 1920×1080, con narración inglesa. Capturas reales del mismo expediente antes/después de la compra Test Store. Versión anterior conservada.
+- Composición editable en `docs/pitch`; MP4 en `public/secondlook-pitch-v2.mp4`.
+- Plantilla OTP inspeccionada visualmente; código legible, caducidad e instrucciones claras.
+- Pruebas: 10 de evidencia/acceso, 13 de integración, 4 evaluaciones EN/ES. Lint sin errores (cinco avisos preexistentes). TypeScript y build de OpenNext correctos.
+- Video: sin errores ni advertencias en check de HyperFrames; 40/40 comprobaciones de contraste pasan. MP4 inspeccionado tras render, incluidos checkout y desbloqueo.

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { hasSecondLook } from "@/lib/entitlements";
-import { getCheck, updateCheck } from "@/lib/db";
+import { consumeRateLimit, getCheck, updateCheck } from "@/lib/db";
 import { applyReportEmail, sendBriefReport } from "@/lib/email";
 import { detectLocale, langCookieName } from "@/lib/i18n";
 import { getSessionUser } from "@/lib/session";
@@ -19,6 +19,7 @@ export async function POST(
     return NextResponse.json({ error: "brief not unlocked" }, { status: 402 });
   }
 
+  if(!(await consumeRateLimit(`report-email:${user.id}`,3,10*60*1000))) return NextResponse.json({error:"Too many email requests. Try again in 10 minutes."},{status:429});
   const jar = await cookies();
   const locale = detectLocale(jar.get(langCookieName())?.value);
   const emailed = await sendBriefReport({ to: user.email, locale, check });

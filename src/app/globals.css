@@ -29,7 +29,11 @@ html, body {
   scroll-padding-top: 4.5rem;
 }
 
-a { color: inherit; }
+@layer base {
+  a { color: inherit; }
+  button:not(:disabled), summary { cursor: pointer; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--green); outline-offset: 4px; }
+}
 
 .glow-active {
   box-shadow:

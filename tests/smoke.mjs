@@ -44,7 +44,7 @@ async function api(path, opts = {}) {
   return { res, json };
 }
 
-test("health: all sponsor keys live", async () => {
+test("health: required provider credentials configured", async () => {
   const { res, json } = await api("/api/health");
   assert.equal(res.status, 200);
   assert.equal(json.product, "SecondLook");
@@ -145,4 +145,12 @@ test("failed purchase stays locked", async () => {
 test("client cannot self-grant entitlement", async () => {
   const { res } = await api(`/api/checks/${checkId}/unlock`, {method: "POST",body: JSON.stringify({entitled:true,purchaseStatus:"success"})});
   assert.equal(res.status,402,"An unpurchased test user must not unlock by asserting entitlement");
+});
+
+test("separate demo users cannot read each other's assessments", async () => {
+  await api("/api/auth/demo", {method:"POST"});
+  const detail=await api(`/api/checks/${checkId}`);
+  assert.equal(detail.res.status,404);
+  const listing=await api('/api/checks');
+  assert.ok(!listing.json.checks.some(c=>c.id===checkId));
 });

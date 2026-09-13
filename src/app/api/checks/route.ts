@@ -6,12 +6,13 @@ import { hasSecondLook, publicCheck } from "@/lib/entitlements";
 import { insertCheck, listChecks } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
 
-export async function GET() {
+export async function GET(req: Request) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const checks = await listChecks(user.id);
   const active = checks.some(c => c.payload.brief) ? await hasSecondLook(user.id).catch(() => false) : false;
-  return NextResponse.json({ checks: checks.map(c => publicCheck(c, active)) });
+  if(new URL(req.url).searchParams.get("summary") !== "1") return NextResponse.json({checks:checks.map(c=>publicCheck(c,active))});
+  return NextResponse.json({ checks: checks.map(c => {const safe=publicCheck(c,active);return {id:safe.id,claim:safe.claim,status:safe.status,createdAt:safe.createdAt,updatedAt:safe.updatedAt,sourceCount:safe.payload.firstLook?.sources.length || 0,hasFirstLook:!!safe.payload.firstLook,hasBrief:!!safe.payload.brief};}) });
 }
 
 export async function POST(req: Request) {

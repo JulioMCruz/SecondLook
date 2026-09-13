@@ -1,0 +1,49 @@
+{
+  "provider": "macOS say",
+  "voice": "Samantha",
+  "reason": "Preserve the existing project narrator; no new voice-provider setup.",
+  "lines": [
+    {
+      "text": "Sales teams make confident promises. Small businesses need evidence before they commit. Meet SecondLook.",
+      "start": 0.35,
+      "duration": 6.5,
+      "file": "01.m4a"
+    },
+    {
+      "text": "Paste a claim in English or Spanish. The first look searches the live web with Linkup.",
+      "start": 7.35,
+      "duration": 4.7,
+      "file": "02.m4a"
+    },
+    {
+      "text": "Nebius identifies the missing proof and proposes a targeted follow-up. Product availability does not prove that every competitor uses it.",
+      "start": 16.35,
+      "duration": 7.8,
+      "file": "03.m4a"
+    },
+    {
+      "text": "RevenueCat runs the test checkout. A failed purchase keeps the first look intact. A valid test purchase unlocks further research.",
+      "start": 26.35,
+      "duration": 7.5,
+      "file": "04.m4a"
+    },
+    {
+      "text": "The server verifies access. Nebius builds findings with exact source passages, then checks whether those passages justify the conclusion.",
+      "start": 38.35,
+      "duration": 8.2,
+      "file": "05.m4a"
+    },
+    {
+      "text": "Here, the answer is insufficient evidence. Inspect the sources, ask the right questions, and keep the decision brief.",
+      "start": 49.35,
+      "duration": 7.3,
+      "file": "06.m4a"
+    },
+    {
+      "text": "SecondLook. Before you buy, check the proof.",
+      "start": 59.35,
+      "duration": 3.2,
+      "file": "07.m4a"
+    }
+  ]
+}

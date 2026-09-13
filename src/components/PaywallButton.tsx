@@ -78,10 +78,6 @@ export default function PaywallButton({ appUserId, email, onResult }: Props) {
     }
   }
 
-  async function failPurchase() {
-    onResult({ entitled: false, purchaseStatus: "fail" });
-  }
-
   if (!ready) {
     return (
       <div className="rounded-xl border border-[var(--line)] bg-white p-4 text-sm">
@@ -113,12 +109,7 @@ export default function PaywallButton({ appUserId, email, onResult }: Props) {
         >
           {busy ? t.payBusy : active ? (es ? "Continuar con mi acceso" : "Continue with my access") : t.payBuy}
         </button>
-        <button
-          onClick={failPurchase}
-          className="rounded-full border border-[var(--line)] px-4 py-2 text-sm"
-        >
-          {t.payFailSim}
-        </button>
+
       </div>
       {error ? <div role="alert" className="mt-3 rounded-lg bg-amber-50 p-3 text-xs text-amber-900"><p>{error}</p><button onClick={load} disabled={loading} className="mt-2 font-semibold underline">{es ? "Reintentar" : "Retry"}</button></div> : null}
     </div>

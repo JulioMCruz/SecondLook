@@ -178,12 +178,12 @@
   },
   "brief": {
     "verdict": "Unknown",
-    "summary": "No se encontró evidencia que demuestre que *todos* los competidores en Miami usan IA para responder en WhatsApp. Los documentos indican que la IA está disponible y que varios sectores en Miami la están adoptando, pero no se citan porcentajes ni estudios que cubran a la totalidad de los competidores.",
+    "summary": "El reclamo de que todos los competidores en Miami ya usan IA para responder en WhatsApp no está respaldado por evidencia concreta. Los documentos revisados confirman que la IA para WhatsApp está disponible y es adoptada por varios negocios en Miami, pero ninguno indica una adopción total ni proporciona un porcentaje que cubra a todos los competidores.",
     "findings": [
       {
         "claim": "Todos mis competidores en Miami ya usan IA para responder WhatsApp.",
         "status": "insufficient",
-        "explanation": "Los textos muestran que la IA para WhatsApp está disponible y que empresas de diferentes sectores en Miami la están implementando (p. ej., F2 y F3), y que a nivel global la adopción supera el 75 % en compañías con más de 10 empleados (S3). Sin embargo, ninguno de los fuentes proporciona un porcentaje específico ni una encuesta que cubra a *todos* los competidores en Miami. Por lo tanto, la afirmación no puede confirmarse ni refutarse con los datos disponibles.",
+        "explanation": "Los textos citados describen la disponibilidad de herramientas de IA para WhatsApp en Miami y mencionan que varios sectores locales están adoptando estas soluciones, pero no ofrecen datos que demuestren que el 100 % de los competidores en la zona las usan. No se encontró ninguna fuente que afirme una adopción universal ni un porcentaje que alcance la totalidad de los negocios.",
         "evidence": [
           {
             "sourceId": "F2",
@@ -192,27 +192,33 @@
           },
           {
             "sourceId": "F3",
-            "excerpt": "- Real Estate— Brickell condos, Miami Beach luxury properties, and South Florida developments are heavily marketed to Latin American buyers via WhatsApp AI in Spanish and Portuguese.",
+            "excerpt": "Why Miami Businesses Choose AI WhatsApp Agents",
+            "relation": "context"
+          },
+          {
+            "sourceId": "F7",
+            "excerpt": "Built in Miami, for Miami businesses Miami businesses using AI that actually works.No hype.",
             "relation": "context"
           },
           {
             "sourceId": "S3",
-            "excerpt": "por mensajeria · La adopcion de IA conversacional en WhatsApp supere el 75% entre empresas con mas de 10 empleados...",
+            "excerpt": "Se espera que: El numero de cuentas de WhatsApp Business supere los 300 millones globalmente · El 80% de las interacciones comerciales iniciales en LATAM ocurran por mensajeria · La adopcion de IA conversacional en WhatsApp supere el 75% entre empresas con mas de 10 empleados",
             "relation": "context"
           }
         ],
         "missingEvidence": [
-          "Encuesta o estudio que cuantifique el porcentaje de negocios en Miami que usan IA para responder en WhatsApp.",
-          "Datos de 2026 que cubran a la totalidad de los competidores en el mercado local."
+          "Encuesta específica de 2026 que indique el porcentaje exacto de negocios en Miami que utilizan IA para responder en WhatsApp.",
+          "Lista de competidores locales con confirmación de uso de IA en sus canales de WhatsApp.",
+          "Estudios de mercado que comparen adopción de IA en WhatsApp entre Miami y otras ciudades similares."
         ]
       }
     ],
     "questionsForSeller": [
-      "¿Puede proporcionar una encuesta o estudio reciente (2026) que indique el porcentaje exacto de competidores en Miami que utilizan IA para responder en WhatsApp?",
-      "¿Cuál es la metodología y el tamaño de muestra de esa encuesta?",
-      "¿Tiene ejemplos de competidores en Miami que *no* usan IA para WhatsApp, para contrastar la afirmación de adopción total?"
+      "¿Puede proporcionar una encuesta o estudio de 2026 que muestre el porcentaje exacto de negocios en Miami que utilizan IA para responder mensajes de WhatsApp?",
+      "¿Tiene una lista de competidores locales que hayan implementado soluciones de IA en WhatsApp, con evidencia (por ejemplo, capturas de pantalla o testimonios) que lo respalde?",
+      "¿Puede compartir casos de estudio o métricas de rendimiento que demuestren la adopción de IA en WhatsApp entre la mayoría de los negocios de su sector en Miami?"
     ],
-    "whatChanged": "La segunda búsqueda añadió la frase \"encuesta 2026 adopción IA WhatsApp negocios Miami porcentaje competidores\", pero no se encontró ningún documento que respondiera a esa consulta; no se obtuvo nueva evidencia que apoye o contradiga la afirmación.",
+    "whatChanged": "La segunda búsqueda añadió los términos de encuesta 2026 sobre adopción de IA en WhatsApp en Miami, pero los resultados siguen sin proporcionar un porcentaje de adopción ni confirmar que todos los competidores la usan; solo se obtuvieron fuentes que describen la disponibilidad y casos parciales.",
     "locale": "es",
     "facts": [],
     "hypotheses": [],
@@ -222,19 +228,20 @@
     "where": [
       "F2",
       "F3",
+      "F7",
       "S3"
     ],
     "struggle": true
   },
   "metrics": {
-    "nebiousMs": 5111,
-    "promptTokens": 12305,
-    "completionTokens": 1262,
-    "totalTokens": 13567,
-    "estimatedUsd": 0.0020350499999999996,
+    "nebiousMs": 4455,
+    "promptTokens": 13693,
+    "completionTokens": 1105,
+    "totalTokens": 14798,
+    "estimatedUsd": 0.0022197,
     "model": "openai/gpt-oss-120b"
   },
-  "totalMs": 5112,
+  "totalMs": 4456,
   "validCitations": true,
   "expectedPresent": true
 }

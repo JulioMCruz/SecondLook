@@ -27,6 +27,7 @@ export async function POST(req: Request) {
     const message = err instanceof Error ? err.message : "email failed";
     return NextResponse.json({ error: message }, { status: 502 });
   }
+  if(!sent && process.env.NODE_ENV === "production") return NextResponse.json({error:"Email delivery is unavailable. Please try again later."},{status:503});
   const showDev = !sent && process.env.NODE_ENV !== "production";
   return NextResponse.json({
     ok: true,

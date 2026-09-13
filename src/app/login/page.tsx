@@ -19,6 +19,7 @@ function LoginForm() {
     e.preventDefault();
     setBusy(true);
     setError("");
+    try {
     const res = await fetch("/api/auth/otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -32,12 +33,14 @@ function LoginForm() {
     }
     if (data.devCode) setDevCode(data.devCode);
     setStage("code");
+    } catch { setError(t.sendCodeFail); } finally {setBusy(false);}
   }
 
   async function verify(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError("");
+    try {
     const res = await fetch("/api/auth/otp", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -50,11 +53,13 @@ function LoginForm() {
       return;
     }
     router.push("/app");
+    } catch { setError(t.demoFail); } finally {setBusy(false);}
   }
 
   async function demo() {
     setBusy(true);
     setError("");
+    try {
     const res = await fetch("/api/auth/demo", { method: "POST" });
     setBusy(false);
     if (!res.ok) {
@@ -62,6 +67,7 @@ function LoginForm() {
       return;
     }
     router.push("/app");
+    } catch { setError(t.demoFail); } finally {setBusy(false);}
   }
 
   useEffect(() => {

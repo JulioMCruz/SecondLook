@@ -1,3 +1,4 @@
+import type { EvidenceFinding, SourceHit } from "./types";
 const PAPER = "#f7f4ee";
 const INK = "#1a1a1a";
 const MUTED = "#6b6560";
@@ -18,9 +19,9 @@ function nl2br(value: string) {
   return escapeHtml(value).replace(/\n/g, "<br/>");
 }
 
-function shell(inner: string) {
+function shell(inner: string, locale: "en" | "es" = "en") {
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${locale}">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -44,7 +45,7 @@ function shell(inner: string) {
           </tr>
           <tr>
             <td style="padding:20px 4px 0 4px;font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;font-size:12px;line-height:18px;color:${MUTED};">
-              SecondLook files one claim at a time. This is not a newsletter.
+              ${locale === "es" ? "SecondLook · Evidencia para tomar mejores decisiones." : "SecondLook · Evidence for better business decisions."}
               <br/>
               <a href="${SITE}" style="color:${GREEN};text-decoration:none;">${SITE.replace("https://", "")}</a>
             </td>
@@ -220,6 +221,9 @@ export function contactAutoEmail(input: {
 }
 
 type BriefMail = {
+  findings?: EvidenceFinding[];
+  questionsForSeller?: string[];
+  sources?: SourceHit[];
   locale: "en" | "es";
   claim: string;
   checkId: string;
@@ -295,11 +299,11 @@ export function briefReportEmail(input: BriefMail) {
 
   const copy = es
     ? {
-        kicker: "Recibo · brief pagado",
-        title: "Tu brief ya está en el archivo.",
-        body: "Pagaste para quedártelo. Test Store o no: el archivo es el mismo que en Tus recibos.",
+        kicker: "Expediente de evidencia",
+        title: "Tu evaluación está lista.",
+        body: "Aquí tienes el resumen y las pruebas de tu evaluación. Conserva el enlace para volver al expediente.",
         test: "TEST STORE",
-        claim: "El claim",
+        claim: "La afirmación",
         facts: "Hechos",
         hypotheses: "Hipótesis",
         unknowns: "Lo desconocido",
@@ -307,14 +311,14 @@ export function briefReportEmail(input: BriefMail) {
         struggle: "No se pudo cerrar",
         search1: "Búsqueda 1 · Linkup",
         search2: "Búsqueda 2 · follow-up",
-        open: "Abrir el recibo",
+        open: "Abrir evaluación",
         subject: `SecondLook · tu brief · ${input.verdict}`,
         footer: "SecondLook archiva un claim a la vez. Esto no es un newsletter.",
       }
     : {
-        kicker: "Receipt · paid brief",
-        title: "Your brief is on file.",
-        body: "You paid to keep this. Test Store or not: this is the same file as in Your receipts.",
+        kicker: "Evidence brief",
+        title: "Your assessment is ready.",
+        body: "Here are the findings and evidence from your assessment. Keep the link to return to your saved brief.",
         test: "TEST STORE",
         claim: "The claim",
         facts: "Facts",
@@ -324,10 +328,13 @@ export function briefReportEmail(input: BriefMail) {
         struggle: "Could not close",
         search1: "Search 1 · Linkup",
         search2: "Search 2 · follow-up",
-        open: "Open the receipt",
+        open: "Open assessment",
         subject: `SecondLook · your brief · ${input.verdict}`,
         footer: "SecondLook files one claim at a time. This is not a newsletter.",
       };
+
+  const statusLabels = es ? {supported:"Respaldado",contradicted:"Contradicho",insufficient:"Evidencia insuficiente"} : {supported:"Supported",contradicted:"Contradicted",insufficient:"Insufficient evidence"};
+  const findingsHtml = (input.findings || []).map(f => `<tr><td style="padding:20px 28px;font:14px/23px Arial,sans-serif"><p style="color:${GREEN};font-weight:bold">${statusLabels[f.status]}</p><h3>${escapeHtml(f.claim)}</h3><p>${escapeHtml(f.explanation)}</p>${f.evidence.map(e=>{const source=input.sources?.find(s=>s.id===e.sourceId);return source?`<blockquote style="margin:14px 0;border-left:3px solid ${GREEN};padding-left:12px">${escapeHtml(e.excerpt)}<p><a href="${escapeHtml(source.url)}" style="color:${GREEN}">${escapeHtml(source.name)}</a></p></blockquote>`:"";}).join("")}</td></tr>${listSection(es?"Qué falta demostrar":"What remains unproven",f.missingEvidence)}`).join("");
 
   const html = shell(`
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
@@ -348,7 +355,7 @@ export function briefReportEmail(input: BriefMail) {
       </tr>
       <tr>
         <td style="padding:0 28px 8px 28px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${GREEN};">
-          ${escapeHtml(input.verdict)}
+          ${input.findings ? (es?"Hallazgos y fuentes":"Findings and sources") : escapeHtml(input.verdict)}
         </td>
       </tr>
       <tr>
@@ -364,10 +371,12 @@ export function briefReportEmail(input: BriefMail) {
           </div>
         </td>
       </tr>
-      ${listSection(copy.facts, input.facts)}
-      ${listSection(copy.hypotheses, input.hypotheses)}
-      ${listSection(copy.unknowns, input.unknowns)}
-      ${listSection(copy.where, input.where)}
+      ${findingsHtml}
+      ${listSection(es?"Preguntas para tu próxima conversación":"Questions for your next conversation",input.questionsForSeller || [])}
+      ${input.findings ? "" : listSection(copy.facts, input.facts)}
+      ${input.findings ? "" : listSection(copy.hypotheses, input.hypotheses)}
+      ${input.findings ? "" : listSection(copy.unknowns, input.unknowns)}
+      ${input.findings ? "" : listSection(copy.where, input.where)}
       ${
         input.struggle
           ? `<tr><td style="padding:16px 28px 0 28px;">
@@ -392,7 +401,7 @@ export function briefReportEmail(input: BriefMail) {
         </td>
       </tr>
     </table>
-  `);
+  `, input.locale);
 
   const text = [
     copy.kicker + (input.testPurchase ? ` · ${copy.test}` : ""),
@@ -404,6 +413,8 @@ export function briefReportEmail(input: BriefMail) {
     input.summary,
     "",
     `${copy.claim}: ${input.claim}`,
+    ...(input.findings || []).map(f=>`${statusLabels[f.status]}: ${f.claim}\n${f.explanation}\n${f.evidence.map(e=>`“${e.excerpt}” ${input.sources?.find(s=>s.id===e.sourceId)?.url || ""}`).join("\n")}`),
+    ...(input.questionsForSeller || []).map((q,i)=>`${i+1}. ${q}`),
     "",
     input.facts.length ? `${copy.facts}\n${input.facts.map((f) => `- ${f}`).join("\n")}` : "",
     input.hypotheses.length ? `${copy.hypotheses}\n${input.hypotheses.map((f) => `- ${f}`).join("\n")}` : "",
@@ -425,6 +436,6 @@ export function loginCodeEmail(code: string, locale: "en" | "es" = "en") {
   const instruction = es ? "Introduce este código para acceder a tus evaluaciones." : "Enter this code to access your assessments.";
   const expires = es ? "Válido durante 10 minutos. No compartas este código." : "Valid for 10 minutes. Do not share this code.";
   const notice = es ? "Si no solicitaste este acceso, puedes ignorar este correo." : "If you did not request this sign-in, you can ignore this email.";
-  const html = shell(`<div style="padding:36px;font-family:Arial,sans-serif"><p style="font-size:11px;letter-spacing:2px;color:${GREEN}">SECONDLOOK / ${es ? "ACCESO SEGURO" : "SECURE ACCESS"}</p><h1 style="font-family:Georgia,serif;font-size:30px;font-weight:400">${title}</h1><p style="font-size:15px;line-height:24px;color:${MUTED}">${instruction}</p><div style="margin:28px 0;padding:24px;text-align:center;border:1px solid ${LINE};background:${PAPER};font-family:monospace;font-size:38px;letter-spacing:10px;color:${GREEN}">${escapeHtml(code)}</div><p style="font-size:13px;color:${MUTED}">${expires}</p><hr style="border:0;border-top:1px solid ${LINE};margin:28px 0"/><p style="font-size:12px;line-height:20px;color:${MUTED}">${notice}</p></div>`).replace('<html lang="en">', `<html lang="${locale}">`);
+  const html = shell(`<div style="padding:36px;font-family:Arial,sans-serif"><p style="font-size:11px;letter-spacing:2px;color:${GREEN}">SECONDLOOK / ${es ? "ACCESO SEGURO" : "SECURE ACCESS"}</p><h1 style="font-family:Georgia,serif;font-size:30px;font-weight:400">${title}</h1><p style="font-size:15px;line-height:24px;color:${MUTED}">${instruction}</p><div style="margin:28px 0;padding:24px;text-align:center;border:1px solid ${LINE};background:${PAPER};font-family:monospace;font-size:38px;letter-spacing:10px;color:${GREEN}">${escapeHtml(code)}</div><p style="font-size:13px;color:${MUTED}">${expires}</p><hr style="border:0;border-top:1px solid ${LINE};margin:28px 0"/><p style="font-size:12px;line-height:20px;color:${MUTED}">${notice}</p></div>`, locale);
   return { subject: es ? "Tu código de acceso · SecondLook" : "Your sign-in code · SecondLook", html, text: `${title}\n\n${instruction}\n\n${code}\n\n${expires}\n${notice}` };
 }

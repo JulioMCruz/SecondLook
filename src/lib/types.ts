@@ -88,3 +88,5 @@ export type SessionUser = {
   id: string;
   email: string;
 };
+
+export type CheckSummary = Pick<CheckRecord, "id" | "claim" | "status" | "createdAt" | "updatedAt"> & {sourceCount: number; hasFirstLook: boolean; hasBrief: boolean};
