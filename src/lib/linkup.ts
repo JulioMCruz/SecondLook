@@ -15,10 +15,14 @@ export async function runSearch(query: string, depth: "standard" | "deep"): Prom
     depth,
     outputType: "sourcedAnswer",
   });
-  const sources: SourceHit[] = (response.sources ?? []).map((s) => ({
-    name: s.name,
+  const clean = (text: string) => text.replace(/&mdash;/g, "—").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/[#*_`]/g, "").trim();
+  const seen = new Set<string>();
+  const sources: SourceHit[] = (response.sources ?? []).filter(s => {
+    try { const u = new URL(s.url); if (!["http:", "https:"].includes(u.protocol) || seen.has(u.href)) return false; seen.add(u.href); return true; } catch { return false; }
+  }).map((s) => ({
+    name: clean(s.name),
     url: s.url,
-    snippet: s.snippet,
+    snippet: clean(s.snippet || ""),
   }));
   return {
     query,

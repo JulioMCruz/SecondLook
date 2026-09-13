@@ -418,3 +418,13 @@ export function briefReportEmail(input: BriefMail) {
 
   return { subject: copy.subject, html, text };
 }
+
+export function loginCodeEmail(code: string, locale: "en" | "es" = "en") {
+  const es = locale === "es";
+  const title = es ? "Tu acceso a SecondLook" : "Your SecondLook sign-in";
+  const instruction = es ? "Introduce este código para acceder a tus evaluaciones." : "Enter this code to access your assessments.";
+  const expires = es ? "Válido durante 10 minutos. No compartas este código." : "Valid for 10 minutes. Do not share this code.";
+  const notice = es ? "Si no solicitaste este acceso, puedes ignorar este correo." : "If you did not request this sign-in, you can ignore this email.";
+  const html = shell(`<div style="padding:36px;font-family:Arial,sans-serif"><p style="font-size:11px;letter-spacing:2px;color:${GREEN}">SECONDLOOK / ${es ? "ACCESO SEGURO" : "SECURE ACCESS"}</p><h1 style="font-family:Georgia,serif;font-size:30px;font-weight:400">${title}</h1><p style="font-size:15px;line-height:24px;color:${MUTED}">${instruction}</p><div style="margin:28px 0;padding:24px;text-align:center;border:1px solid ${LINE};background:${PAPER};font-family:monospace;font-size:38px;letter-spacing:10px;color:${GREEN}">${escapeHtml(code)}</div><p style="font-size:13px;color:${MUTED}">${expires}</p><hr style="border:0;border-top:1px solid ${LINE};margin:28px 0"/><p style="font-size:12px;line-height:20px;color:${MUTED}">${notice}</p></div>`).replace('<html lang="en">', `<html lang="${locale}">`);
+  return { subject: es ? "Tu código de acceso · SecondLook" : "Your sign-in code · SecondLook", html, text: `${title}\n\n${instruction}\n\n${code}\n\n${expires}\n${notice}` };
+}

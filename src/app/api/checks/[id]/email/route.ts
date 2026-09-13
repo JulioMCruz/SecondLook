@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { hasSecondLook } from "@/lib/entitlements";
 import { getCheck, updateCheck } from "@/lib/db";
 import { applyReportEmail, sendBriefReport } from "@/lib/email";
 import { detectLocale, langCookieName } from "@/lib/i18n";
@@ -14,7 +15,7 @@ export async function POST(
   const { id } = await ctx.params;
   const check = await getCheck(id, user.id);
   if (!check) return NextResponse.json({ error: "not found" }, { status: 404 });
-  if (!check.payload.brief || check.payload.entitlementActive === false) {
+  if (!check.payload.brief || !(await hasSecondLook(user.id).catch(() => false))) {
     return NextResponse.json({ error: "brief not unlocked" }, { status: 402 });
   }
 

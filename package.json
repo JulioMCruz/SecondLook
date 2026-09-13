@@ -9,7 +9,10 @@
     "lint": "eslint",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "test": "node --test --test-concurrency=1 tests/smoke.mjs"
+    "test": "node --test tests/evidence.test.mjs",
+    "test:smoke": "node --test --test-concurrency=1 tests/smoke.mjs",
+    "evaluate": "node scripts/evaluate.mjs",
+    "db:local": "wrangler d1 execute secondlook --local --file schema.sql"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.20.6",

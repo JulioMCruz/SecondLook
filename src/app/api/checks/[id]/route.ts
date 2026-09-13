@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { visibleCheck } from "@/lib/entitlements";
 import { getCheck } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
 
@@ -11,5 +12,5 @@ export async function GET(
   const { id } = await ctx.params;
   const check = await getCheck(id, user.id);
   if (!check) return NextResponse.json({ error: "not found" }, { status: 404 });
-  return NextResponse.json({ check });
+  return NextResponse.json({ check: await visibleCheck(check) });
 }

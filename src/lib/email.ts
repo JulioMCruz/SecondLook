@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { briefReportEmail, contactAutoEmail, contactNotifyEmail } from "@/lib/email-templates";
+import { loginCodeEmail, briefReportEmail, contactAutoEmail, contactNotifyEmail } from "@/lib/email-templates";
 import type { Brief, CheckRecord } from "@/lib/types";
 import type { Locale } from "@/lib/i18n";
 
@@ -15,7 +15,7 @@ function notifyAddress() {
   return process.env.CONTACT_NOTIFY_EMAIL || "julio.cruz@eb-ms.net";
 }
 
-export async function sendLoginCode(email: string, code: string) {
+export async function sendLoginCode(email: string, code: string, locale: Locale = "en") {
   const key = process.env.RESEND_API_KEY;
   if (!key) return { sent: false as const, reason: "missing_key" as const };
 
@@ -23,8 +23,7 @@ export async function sendLoginCode(email: string, code: string) {
   const { error } = await resend.emails.send({
     from: fromAddress(),
     to: email,
-    subject: "Your SecondLook login code",
-    text: `Your code is ${code}. It expires in 10 minutes.\n\nIf you did not request this, ignore the email.`,
+    ...loginCodeEmail(code, locale),
   });
   if (error) {
     throw new Error(error.message || "Resend send failed");

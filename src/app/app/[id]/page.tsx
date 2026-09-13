@@ -1,5 +1,6 @@
 "use client";
 
+import EvidenceReport from "@/components/EvidenceReport";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -79,13 +80,14 @@ export default function BriefPage() {
       <p className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.savedBrief}</p>
       <h1 className="mt-2 text-2xl font-semibold tracking-tight">{check.claim}</h1>
 
+      {!locked && brief?.findings ? <div className="mt-6"><EvidenceReport check={check}/></div> : null}
       {locked ? (
         <p className="mt-6 rounded-xl border border-[var(--line)] bg-white p-4 text-sm">
           {t.briefHidden}
         </p>
       ) : (
         <article className="mt-6 space-y-5 rounded-2xl border border-[var(--line)] bg-white p-6">
-          <p className="text-sm font-semibold uppercase tracking-wider text-[var(--green)]">
+          {!brief.findings && <><p className="text-sm font-semibold uppercase tracking-wider text-[var(--green)]">
             {brief.verdict === "Fact"
               ? t.fact
               : brief.verdict === "Hypothesis"
@@ -139,6 +141,7 @@ export default function BriefPage() {
             </p>
           ) : null}
 
+          </>}
           <div className="no-print rounded-xl border border-[var(--line)] bg-[var(--paper,#f7f4ee)] px-4 py-3 text-sm">
             {check.payload.reportEmailedAt ? (
               <p>

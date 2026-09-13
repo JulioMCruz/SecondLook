@@ -3,194 +3,59 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useState } from "react";
-import CheckCanvas from "@/components/CheckCanvas";
+import { ArrowLeft, ArrowRight, Check, FileSearch, Loader2, LockKeyhole, Search } from "lucide-react";
 import PaywallButton from "@/components/PaywallButton";
-import ProcessGuide from "@/components/ProcessGuide";
-import SourceStage from "@/components/SourceStage";
-import BriefWrite from "@/components/BriefWrite";
 import VoiceListen from "@/components/VoiceListen";
-import { useT } from "@/components/LocaleProvider";
+import EvidenceReport from "@/components/EvidenceReport";
+import { LangSwitch, useT } from "@/components/LocaleProvider";
 import type { CheckRecord } from "@/lib/types";
 
 function NewCheckInner() {
-  const { t } = useT();
-  const router = useRouter();
-  const params = useSearchParams();
-  const existingId = params.get("id");
-  const [claim, setClaim] = useState("");
-  const [check, setCheck] = useState<CheckRecord | null>(null);
-  const [email, setEmail] = useState("");
-  const [userId, setUserId] = useState("");
-  const [running, setRunning] = useState<string | null>(null);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetch("/api/auth/me").then(async (r) => {
-      if (!r.ok) {
-        router.push("/login");
-        return;
-      }
-      const data = await r.json();
-      setEmail(data.user.email);
-      setUserId(data.user.id);
-    });
-  }, [router]);
-
-  useEffect(() => {
-    if (!existingId) return;
-    fetch(`/api/checks/${existingId}`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.check) {
-          setCheck(d.check);
-          setClaim(d.check.claim);
-        }
-      });
-  }, [existingId]);
-
+  const {locale} = useT(); const es = locale === "es";
+  const router = useRouter(); const params = useSearchParams(); const existingId = params.get("id");
+  const [claim,setClaim] = useState(""); const [check,setCheck] = useState<CheckRecord|null>(null);
+  const [user,setUser] = useState({id:"",email:""}); const [running,setRunning] = useState<"first"|"second"|null>(null); const [error,setError] = useState("");
+  useEffect(()=>{fetch("/api/auth/me").then(async r=>{if(!r.ok){router.push("/login");return;}const d=await r.json();setUser(d.user);}).catch(()=>setError("Connection failed. Reload to retry."));},[router]);
+  useEffect(()=>{if(!existingId)return;fetch(`/api/checks/${existingId}`).then(r=>r.json()).then(d=>{if(d.check){setCheck(d.check);setClaim(d.check.claim);}});},[existingId]);
   async function start(e: FormEvent) {
-    e.preventDefault();
-    setError("");
-    setRunning("01");
-    const created = await fetch("/api/checks", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ claim }),
-    });
-    const createdData = await created.json();
-    if (!created.ok) {
-      setRunning(null);
-      setError(createdData.error || t.createFail);
-      return;
-    }
-    setCheck(createdData.check);
-    setRunning("01");
-    const res = await fetch(`/api/checks/${createdData.check.id}/first-look`, {
-      method: "POST",
-    });
-    const data = await res.json();
-    setRunning(null);
-    if (!res.ok) {
-      setError(data.error || t.firstFail);
-      return;
-    }
-    setCheck(data.check);
+    e.preventDefault();setError("");setRunning("first");
+    try {
+      let record = check;
+      if (!record) {const r=await fetch("/api/checks",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({claim})});const d=await r.json();if(!r.ok)throw Error(d.error);record=d.check;setCheck(record);}
+      const r=await fetch(`/api/checks/${record!.id}/first-look`,{method:"POST"});const d=await r.json();if(!r.ok)throw Error(d.error);setCheck(d.check);router.replace(`/app/new?id=${d.check.id}`,{scroll:false});
+    } catch(e) {setError(e instanceof Error?e.message:"Request failed");} finally {setRunning(null);}
   }
-
-  async function afterPurchase(result: {
-    entitled: boolean;
-    purchaseStatus: "success" | "fail" | "cancel";
-  }) {
-    if (!check) return;
-    setError("");
-    if (!result.entitled) {
-      const res = await fetch(`/api/checks/${check.id}/unlock`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result),
-      });
-      const data = await res.json();
-      if (data.check) setCheck(data.check);
-      setError(result.purchaseStatus === "cancel" ? t.payCancelled : t.payFailed);
-      return;
-    }
-    setRunning("03");
-    const res = await fetch(`/api/checks/${check.id}/unlock`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(result),
-    });
-    const data = await res.json();
-    setRunning(null);
-    if (!res.ok) {
-      setError(data.error || t.unlockFail);
-      return;
-    }
-    setCheck(data.check);
+  async function afterPurchase(result:{entitled:boolean;purchaseStatus:"success"|"fail"|"cancel"}) {
+    if(!check)return;setError("");setRunning(result.entitled?"second":null);
+    try {const r=await fetch(`/api/checks/${check.id}/unlock`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(result)});const d=await r.json();if(d.check)setCheck(d.check);if(!r.ok)throw Error(d.error);if(d.locked)setError(es?"La compra no se completó. Tu primera revisión sigue disponible.":"Purchase did not complete. Your first look is still available.");}
+    catch(e){setError(e instanceof Error?e.message:"Request failed");}finally{setRunning(null);}
   }
-
-  return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <Link href="/app" className="text-sm text-[var(--muted)]">
-          {t.backReceipts}
-        </Link>
-        <p className="text-xs text-[var(--muted)]">{email}</p>
-      </div>
-
-      <h1 className="sl-serif text-3xl font-medium tracking-tight">{t.newTitle}</h1>
-      <p className="mt-1 text-sm text-[var(--muted)]">{t.newBody}</p>
-
-      <ProcessGuide check={check} running={running} />
-
-      <VoiceListen
-        value={claim}
-        onTranscript={setClaim}
-        disabled={Boolean(running) || Boolean(check?.payload.firstLook)}
-      />
-
-      <form onSubmit={start} className="mt-6 space-y-3">
-        <label className="block text-xs text-[var(--muted)]">
-          {t.orType}
-          <textarea
-            value={claim}
-            onChange={(e) => setClaim(e.target.value)}
-            placeholder={t.sampleClaim}
-            rows={3}
-            disabled={Boolean(running) || Boolean(check?.payload.firstLook)}
-            className="mt-1 w-full rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--green)] disabled:opacity-70"
-          />
-        </label>
-        <button
-          disabled={Boolean(running) || check?.status === "first_look" || claim.trim().length < 8}
-          className="rounded-full bg-[var(--green)] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60"
-        >
-          {running ? t.lookingUp : check?.payload.firstLook ? t.firstSaved : t.runFirst}
-        </button>
-      </form>
-
-      {running || check ? (
-        <div className="mt-6">
-          <CheckCanvas check={check} running={running} />
+  const samples = es ? ["Todos mis competidores en Miami ya usan IA para responder WhatsApp.","WhatsApp pertenece a Meta.","Esta herramienta garantiza duplicar mis ventas en 30 días."] : ["All my competitors in Miami already use AI to answer WhatsApp messages.","WhatsApp is owned by Meta.","This tool guarantees twice as many sales in 30 days."];
+  const first = check?.payload.firstLook; const brief = check?.payload.brief;
+  const phase = brief?3:first?2:running?1:0;
+  return <main className="min-h-screen bg-[#f5f6f3]">
+    <header className="border-b border-[#dfe5df] bg-white"><div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-4"><Link href="/app" className="flex items-center gap-2 text-sm font-semibold"><FileSearch size={20} className="text-[var(--green)]"/>SecondLook <span className="ml-2 hidden border-l border-[var(--line)] pl-3 text-xs font-normal text-[var(--muted)] sm:inline">{es?"Evaluación de evidencia":"Evidence workspace"}</span></Link><div className="flex items-center gap-5"><span className="hidden text-xs text-[var(--muted)] sm:inline">{user.email}</span><LangSwitch/></div></div></header>
+    <div className="mx-auto max-w-7xl px-6 py-8">
+      <Link href="/app" className="inline-flex items-center gap-2 text-xs text-[var(--muted)]"><ArrowLeft size={14}/>{es?"Todas las evaluaciones":"All assessments"}</Link>
+      <div className="mt-6 flex flex-wrap items-start justify-between gap-4"><div><p className="text-[10px] font-semibold uppercase tracking-[.2em] text-[var(--green)]">{es?"INTELIGENCIA PARA DECIDIR":"DECISION INTELLIGENCE"}</p><h1 className="mt-2 text-3xl font-semibold tracking-tight">{es?"Antes de comprar, revisa la evidencia.":"Before you buy, check the proof."}</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)]">{es?"Evalúa una promesa comercial. Comprueba sus fuentes y prepara las preguntas que importan.":"Evaluate a sales claim. Inspect its sources and prepare the questions that matter."}</p></div>{check && <span className="rounded-md border bg-white px-3 py-2 font-mono text-[10px] text-[var(--muted)]">{check.id.slice(-8).toUpperCase()}</span>}</div>
+      <ol className="my-7 flex flex-wrap gap-x-8 gap-y-3 border-y border-[#dfe5df] py-4">{(es?["Definir la promesa","Investigar la evidencia","Preparar la respuesta"]:["Define the claim","Investigate the evidence","Prepare your response"]).map((s,i)=><li key={s} className={`flex items-center gap-2 text-xs ${phase>=i?"font-medium text-[var(--green)]":"text-[var(--muted)]"}`}><span className={`flex h-6 w-6 items-center justify-center rounded-full ${phase>i?"bg-[var(--green)] text-white":"border border-current"}`}>{phase>i?<Check size={12}/>:i+1}</span>{s}</li>)}</ol>
+      <div className={`grid items-start gap-6 ${first?"lg:grid-cols-[320px_minmax(0,1fr)]":"lg:grid-cols-[minmax(0,1fr)_360px]"}`}>
+        <div className="space-y-5"><form onSubmit={start} className="rounded-2xl border border-[#dfe5df] bg-white p-6"><label htmlFor="claim" className="text-sm font-semibold">{es?"¿Qué te están prometiendo?":"What are you being promised?"}</label><p className="mt-2 text-xs leading-5 text-[var(--muted)]">{es?"Incluye empresa, lugar o plazo si los conoces. No añadas datos confidenciales.":"Include the company, location or timeframe if known. Leave out confidential information."}</p><textarea id="claim" value={claim} onChange={e=>setClaim(e.target.value)} placeholder={samples[0]} rows={first?5:4} maxLength={2000} disabled={!!running||!!first} className="mt-4 w-full resize-y rounded-xl border border-[#ccd7cf] bg-[#fafbf9] p-4 text-sm leading-6 outline-none focus:border-[var(--green)] focus:ring-2 focus:ring-emerald-100 disabled:text-[var(--muted)]"/>{!first && <button disabled={!!running||claim.trim().length<8} className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--green)] px-5 py-3 text-sm font-medium text-white disabled:opacity-50">{running?<Loader2 size={16} className="animate-spin"/>:<Search size={16}/>} {running?(es?"Investigando…":"Investigating…"):(es?"Iniciar revisión gratuita":"Start free assessment")}</button>}{!first && <details className="mt-4 text-xs text-[var(--muted)]"><summary className="cursor-pointer">{es?"También puedes dictar la promesa":"You can also dictate the claim"}</summary><VoiceListen value={claim} onTranscript={setClaim} disabled={!!running}/></details>}</form>
+        {first && <div className="rounded-2xl border border-[#dfe5df] bg-white p-5"><p className="text-xs font-semibold">{es?"Registro de investigación":"Research record"}</p><dl className="mt-4 space-y-3 text-xs"><div className="flex justify-between"><dt>{es?"Fuentes recuperadas":"Sources retrieved"}</dt><dd>{first.sources.length}</dd></div><div className="flex justify-between"><dt>{es?"Primera búsqueda":"First search"}</dt><dd>{(first.durationMs/1000).toFixed(1)} s</dd></div><div className="flex justify-between"><dt>{es?"Motor de búsqueda":"Search provider"}</dt><dd>Linkup</dd></div></dl><p className="mt-4 border-t pt-3 text-[11px] leading-5 text-[var(--muted)]">{es?"Las fuentes se guardan con tu evaluación. La falta de pruebas no demuestra que una afirmación sea falsa.":"Sources are saved with your assessment. Missing evidence does not prove a claim is false."}</p></div>}
         </div>
-      ) : null}
-
-      {running === "01" || check?.payload.firstLook ? (
-        <section className="mt-6 space-y-4">
-          <SourceStage
-            sources={check?.payload.firstLook?.sources || []}
-            gap={check?.payload.gap}
-            searching={running === "01"}
-          />
-          {check?.payload.firstLook && running !== "03" && !check.payload.brief ? (
-            <div className="space-y-3">
-              <div className="rounded-2xl border border-[var(--line)] bg-white p-4">
-                <p className="text-sm font-semibold">{t.uxHaveFile}</p>
-                <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{t.uxHaveFileBody}</p>
-              </div>
-              {userId ? (
-                <PaywallButton appUserId={userId} email={email} onResult={afterPurchase} />
-              ) : null}
-            </div>
-          ) : null}
-        </section>
-      ) : null}
-
-      {check?.payload.brief ? <BriefWrite check={check} /> : null}
-
-      {running === "03" && !check?.payload.brief ? (
-        <p className="mt-6 sl-serif text-lg">{t.nebiusWrites}…</p>
-      ) : null}
-
-      {error ? <p className="mt-4 text-sm text-red-700">{error}</p> : null}
-    </main>
-  );
+        <div className="space-y-5">
+          {!first && !running && <aside className="rounded-2xl border border-[#dfe5df] bg-white p-6"><p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">{es?"Empieza con un ejemplo":"Start with an example"}</p><div className="mt-4 space-y-3">{samples.map(s=><button key={s} onClick={()=>setClaim(s)} className="flex w-full items-start justify-between gap-3 rounded-xl border border-[#e4e9e4] p-4 text-left text-sm leading-6 hover:border-[var(--green)] hover:bg-[#f6f9f5]">{s}<ArrowRight size={16} className="mt-1 shrink-0 text-[var(--green)]"/></button>)}</div><p className="mt-5 text-xs leading-6 text-[var(--muted)]">{es?"Primera revisión gratuita. La investigación adicional y el expediente completo se desbloquean mediante una compra de prueba.":"First assessment is free. Further research and the full evidence brief unlock with a test purchase."}</p></aside>}
+          {running && <div role="status" className="rounded-2xl border border-[#b7cfc2] bg-white p-8"><Loader2 className="animate-spin text-[var(--green)]" size={24}/><h2 className="mt-4 text-lg font-semibold">{running==="first"?(es?"Buscando fuentes e identificando lo que falta":"Finding sources and identifying the evidence gap"):(es?"Investigando la brecha y verificando las citas":"Researching the gap and validating citations")}</h2><p className="mt-2 text-sm text-[var(--muted)]">{es?"El resultado se mostrará cuando la investigación termine.":"Results will appear when the research completes."}</p></div>}
+          {first && !brief && <><div className="rounded-2xl border border-[#b7cfc2] bg-white p-6"><p className="text-xs font-semibold uppercase tracking-wider text-[var(--green)]">{es?"Primera revisión · lo que falta demostrar":"First look · the missing evidence"}</p><h2 className="mt-3 text-xl font-semibold">{check?.payload.gap?.label}</h2><p className="mt-3 text-sm leading-7 text-[var(--muted)]">{check?.payload.gap?.reason}</p>{!!check?.payload.gap?.claims?.length&&<ul className="mt-4 space-y-2 border-t pt-4">{check.payload.gap.claims.map((c,i)=><li className="flex gap-3 text-sm" key={i}><span className="font-mono text-xs text-[var(--green)]">0{i+1}</span>{c}</li>)}</ul>}<div className="mt-5 rounded-xl bg-[#f2f6f1] p-4"><p className="text-xs font-semibold">{es?"La siguiente pregunta de investigación":"The next research question"}</p><p className="mt-2 text-sm leading-6">{check?.payload.gap?.followUpQuery}</p></div></div>
+          {running!=="second"&&user.id&&<PaywallButton appUserId={user.id} email={user.email} onResult={afterPurchase}/>}</>}
+          {brief?.findings && check && <EvidenceReport check={check}/>}
+          {brief && check && <Link href={`/app/${check.id}`} className="inline-flex items-center gap-2 rounded-lg bg-[var(--green)] px-5 py-3 text-sm font-medium text-white">{es?"Abrir expediente completo":"Open full brief"}<ArrowRight size={16}/></Link>}
+          {first && <details open={!brief} className="rounded-2xl border border-[#dfe5df] bg-white p-6"><summary className="cursor-pointer text-sm font-semibold">{es?"Fuentes de la primera revisión":"First-look sources"} <span className="ml-2 text-xs font-normal text-[var(--muted)]">{first.sources.length}</span></summary><div className="mt-4 max-h-[420px] space-y-4 overflow-auto">{first.sources.map((s,i)=><div key={s.url} className="border-t border-[#eef1ec] pt-3"><a href={s.url} target="_blank" rel="noreferrer" className="text-sm font-medium text-[var(--green)]"><span className="mr-2 font-mono text-[10px]">{s.id||i+1}</span>{s.name}</a><p className="mt-1 text-xs leading-5 text-[var(--muted)]">{s.snippet.slice(0,240)}</p></div>)}</div></details>}
+          {error&&<div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm leading-6 text-rose-900">{error}</div>}
+          <p className="flex items-center gap-2 text-[11px] text-[var(--muted)]"><LockKeyhole size={12}/>{es?"Evaluación guardada en tu cuenta · Acceso de pago validado en servidor":"Assessment saved to your account · Paid access verified on the server"}</p>
+        </div>
+      </div>
+    </div>
+  </main>;
 }
-
-export default function NewCheckPage() {
-  return (
-    <Suspense>
-      <NewCheckInner />
-    </Suspense>
-  );
-}
+export default function NewCheckPage(){return <Suspense><NewCheckInner/></Suspense>;}

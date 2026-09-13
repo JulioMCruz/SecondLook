@@ -6,6 +6,7 @@ export type SourceHit = {
   name: string;
   url: string;
   snippet: string;
+  id?: string;
 };
 
 export type SearchPass = {
@@ -22,9 +23,22 @@ export type Gap = {
   label: string;
   reason: string;
   followUpQuery: string;
+  claims?: string[];
+};
+
+export type EvidenceFinding = {
+  claim: string;
+  status: "supported" | "contradicted" | "insufficient";
+  explanation: string;
+  evidence: { sourceId: string; excerpt: string; relation: "supports" | "contradicts" | "context" }[];
+  missingEvidence: string[];
 };
 
 export type Brief = {
+  findings?: EvidenceFinding[];
+  questionsForSeller?: string[];
+  whatChanged?: string;
+  locale?: "en" | "es";
   verdict: Verdict;
   summary: string;
   facts: string[];
@@ -46,6 +60,7 @@ export type Metrics = {
 
 export type CheckPayload = {
   claim: string;
+  locale?: "en" | "es";
   firstLook?: SearchPass;
   gap?: Gap;
   followUp?: SearchPass;

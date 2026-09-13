@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-const BASE = process.env.BASE_URL || "https://secondlook.juliomcruz.workers.dev";
+if (!process.env.BASE_URL) throw new Error("Set BASE_URL explicitly; smoke tests create records and call providers.");
+const BASE = process.env.BASE_URL;
 const CLAIM =
   process.env.TEST_CLAIM ||
   "All my competitors already answer WhatsApp with AI in Miami.";
@@ -141,16 +142,7 @@ test("failed purchase stays locked", async () => {
   assert.equal(json.check.status, "first_look");
 });
 
-test("unlock with entitlement runs follow-up + Nebius brief", { timeout: 180_000 }, async () => {
-  const { res, json } = await api(`/api/checks/${checkId}/unlock`, {
-    method: "POST",
-    body: JSON.stringify({ entitled: true, purchaseStatus: "success" }),
-  });
-  assert.equal(res.status, 200, json.error);
-  assert.equal(json.check.status, "unlocked");
-  assert.equal(json.check.payload.entitlementActive, true);
-  assert.ok(json.check.payload.followUp?.sources, "second Linkup pass");
-  assert.ok(json.check.payload.brief?.verdict, "Nebius brief");
-  assert.ok(["Fact", "Hypothesis", "Unknown"].includes(json.check.payload.brief.verdict));
-  assert.ok(json.check.payload.metrics?.model, "Nebius metrics");
+test("client cannot self-grant entitlement", async () => {
+  const { res } = await api(`/api/checks/${checkId}/unlock`, {method: "POST",body: JSON.stringify({entitled:true,purchaseStatus:"success"})});
+  assert.equal(res.status,402,"An unpurchased test user must not unlock by asserting entitlement");
 });
