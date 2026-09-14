@@ -1,0 +1,235 @@
+1
+00:00:00,760 --> 00:00:05,735
+A salesperson says every competitor in Miami already uses AI to answer WhatsApp
+
+2
+00:00:05,750 --> 00:00:06,965
+messages.
+
+3
+00:00:06,980 --> 00:00:09,425
+Should a small business buy the same tool?
+
+4
+00:00:09,440 --> 00:00:11,885
+A confident pitch can create urgency.
+
+5
+00:00:11,900 --> 00:00:13,825
+It does not establish proof.
+
+6
+00:00:13,840 --> 00:00:19,480
+SecondLook helps an owner investigate that claim before committing time and money.
+
+7
+00:00:19,520 --> 00:00:20,860
+Here is the working product.
+
+8
+00:00:20,880 --> 00:00:23,345
+Start with a claim in English or Spanish.
+
+9
+00:00:23,360 --> 00:00:26,865
+Add the company, location, or timeframe when you know them.
+
+10
+00:00:26,880 --> 00:00:30,825
+The first assessment is free, and judges can enter through Try the demo without
+
+11
+00:00:30,840 --> 00:00:32,425
+waiting for an email code.
+
+12
+00:00:32,440 --> 00:00:36,425
+Linkup searches the live web and saves the retrieved sources.
+
+13
+00:00:36,440 --> 00:00:40,745
+Nebius then identifies what the evidence does and does not establish.
+
+14
+00:00:40,760 --> 00:00:45,225
+In this example, finding tools that automate WhatsApp is not evidence that every
+
+15
+00:00:45,240 --> 00:00:47,405
+Miami competitor uses one.
+
+16
+00:00:47,420 --> 00:00:49,905
+That distinction changes the next question.
+
+17
+00:00:49,920 --> 00:00:54,135
+Instead of repeating a broad search, SecondLook proposes a targeted follow-up around
+
+18
+00:00:54,150 --> 00:00:55,745
+the missing proof.
+
+19
+00:00:55,760 --> 00:01:00,015
+The owner can inspect the first sources before deciding whether to unlock deeper
+
+20
+00:01:00,030 --> 00:01:00,845
+research.
+
+21
+00:01:00,860 --> 00:01:05,835
+The value is a narrower, more useful investigation, with a record that stays attached
+
+22
+00:01:05,850 --> 00:01:07,825
+to the original claim.
+
+23
+00:01:07,840 --> 00:01:09,985
+RevenueCat handles the test checkout.
+
+24
+00:01:10,000 --> 00:01:11,945
+First, a failed purchase:
+
+25
+00:01:11,960 --> 00:01:16,105
+the free assessment stays intact and paid research remains locked.
+
+26
+00:01:16,120 --> 00:01:19,345
+Then, a valid test purchase unlocks the next step.
+
+27
+00:01:19,360 --> 00:01:21,905
+These are clearly labeled sandbox transactions.
+
+28
+00:01:21,920 --> 00:01:24,285
+No real money changes hands.
+
+29
+00:01:24,300 --> 00:01:29,075
+The backend verifies the entitlement before running paid research, opening the
+
+30
+00:01:29,090 --> 00:01:31,765
+PDF, or sending an attachment.
+
+31
+00:01:31,780 --> 00:01:36,065
+Access is checked on the server, not inferred from a button in the browser.
+
+32
+00:01:36,080 --> 00:01:40,825
+Missing or expired access blocks paid operations while preserving the first look.
+
+33
+00:01:40,840 --> 00:01:44,465
+With access verified, Linkup performs the focused second search.
+
+34
+00:01:44,480 --> 00:01:46,715
+Nebius builds structured findings:
+
+35
+00:01:46,730 --> 00:01:50,190
+supported, contradicted, or insufficient evidence.
+
+36
+00:01:50,320 --> 00:01:55,325
+Each finding connects to an exact passage from the retrieved material.
+
+37
+00:01:55,340 --> 00:01:58,755
+Open the source and inspect the words behind the conclusion.
+
+38
+00:01:58,770 --> 00:02:03,015
+A separate review checks whether the passages justify the inference and whether
+
+39
+00:02:03,030 --> 00:02:06,505
+the proposed seller questions are useful.
+
+40
+00:02:06,520 --> 00:02:08,945
+Invalid citations cannot support a finding.
+
+41
+00:02:08,960 --> 00:02:13,125
+If the search adds no proof, the report keeps the uncertainty visible.
+
+42
+00:02:13,140 --> 00:02:16,785
+In this case, insufficient evidence is the honest result.
+
+43
+00:02:16,800 --> 00:02:19,205
+That result still helps the owner act.
+
+44
+00:02:19,220 --> 00:02:23,165
+The report explains the gap and prepares concrete questions for the seller.
+
+45
+00:02:23,180 --> 00:02:28,545
+The research record also exposes the model, latency, token usage, and estimated
+
+46
+00:02:28,560 --> 00:02:29,225
+cost.
+
+47
+00:02:29,240 --> 00:02:33,505
+Four English and Spanish regression cases passed with valid citations;
+
+48
+00:02:33,520 --> 00:02:37,345
+this is a small test set, not a claim of universal accuracy.
+
+49
+00:02:37,360 --> 00:02:41,225
+Finally, preview the generated evidence PDF.
+
+50
+00:02:41,240 --> 00:02:46,235
+Keep the claim, findings, source references, and next questions together in a document
+
+51
+00:02:46,250 --> 00:02:48,705
+you can download and discuss.
+
+52
+00:02:48,720 --> 00:02:52,265
+Signed-in email users can also request the attachment.
+
+53
+00:02:52,280 --> 00:02:58,705
+The demo offers the PDF directly, so judges can inspect the deliverable immediately.
+
+54
+00:02:58,720 --> 00:03:03,405
+SecondLook brings live research, verified paid access, and evidence review into
+
+55
+00:03:03,420 --> 00:03:05,305
+one decision workflow.
+
+56
+00:03:05,320 --> 00:03:07,865
+A free first look earns the next step.
+
+57
+00:03:07,880 --> 00:03:11,505
+A reusable brief carries the value beyond the screen.
+
+58
+00:03:11,520 --> 00:03:12,945
+Try the public app.
+
+59
+00:03:12,960 --> 00:03:14,660
+Before you buy, check the proof.
