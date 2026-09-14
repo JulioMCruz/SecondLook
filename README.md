@@ -95,3 +95,11 @@ The D1 schema is in `schema.sql`. Rate-limit and processing-lease tables are cre
 ## Final hackathon demo
 
 [Watch the public 4K demo](https://youtu.be/DPstAoHE2j8). Updated narration and a three-page English evidence PDF preview. [Build and validation notes](docs/pitch-v4/README.md).
+
+## Presentation deck
+
+[Open the English presentation](https://secondlook.juliomcruz.workers.dev/deck). Eight slides connect the customer problem, actual evidence case, workflow, integrations and business hypothesis. The route is public and marked noindex.
+
+Use Present for a slide walkthrough, arrow keys or Page Up/Down to navigate, Home/End to jump, N for visible speaker notes, F for fullscreen and Escape for overview. A rehearsal timer, slide previews, browser printing, the actual three-page PDF preview/download and links to the live demo and final video are included. Notes appear on the same screen; hide them before screen sharing.
+
+The sample PDF is the recorded demo export from `docs/pitch-v4/secondlook-evidence-brief-en.pdf`. Commercial assumptions and planned capabilities are explicitly separated from working features.
