@@ -1,5 +1,6 @@
 import { Resend } from "resend";
-import { briefReportEmail, contactAutoEmail, contactNotifyEmail } from "@/lib/email-templates";
+import { briefPdf } from "./brief-pdf";
+import { loginCodeEmail, briefReportEmail, contactAutoEmail, contactNotifyEmail } from "@/lib/email-templates";
 import type { Brief, CheckRecord } from "@/lib/types";
 import type { Locale } from "@/lib/i18n";
 
@@ -15,7 +16,7 @@ function notifyAddress() {
   return process.env.CONTACT_NOTIFY_EMAIL || "julio.cruz@eb-ms.net";
 }
 
-export async function sendLoginCode(email: string, code: string) {
+export async function sendLoginCode(email: string, code: string, locale: Locale = "en") {
   const key = process.env.RESEND_API_KEY;
   if (!key) return { sent: false as const, reason: "missing_key" as const };
 
@@ -23,8 +24,7 @@ export async function sendLoginCode(email: string, code: string) {
   const { error } = await resend.emails.send({
     from: fromAddress(),
     to: email,
-    subject: "Your SecondLook login code",
-    text: `Your code is ${code}. It expires in 10 minutes.\n\nIf you did not request this, ignore the email.`,
+    ...loginCodeEmail(code, locale),
   });
   if (error) {
     throw new Error(error.message || "Resend send failed");
@@ -85,6 +85,7 @@ export async function sendBriefReport(input: {
   check: CheckRecord;
 }) {
   const key = process.env.RESEND_API_KEY;
+  if (isDemoInbox(input.to)) return {sent:false,copiedToNotify:false,to:input.to,error:"Demo session: report saved on screen. Sign in with email for delivery."};
   if (!key) {
     return { sent: false, copiedToNotify: false, to: input.to, error: "missing_key" as const };
   }
@@ -100,6 +101,9 @@ export async function sendBriefReport(input: {
     checkId: input.check.id,
     verdict: brief.verdict,
     summary: brief.summary,
+    findings: brief.findings,
+    questionsForSeller: brief.questionsForSeller,
+    sources: [...(input.check.payload.firstLook?.sources || []), ...(input.check.payload.followUp?.sources || [])],
     facts: brief.facts ?? [],
     hypotheses: brief.hypotheses ?? [],
     unknowns: brief.unknowns ?? [],
@@ -123,7 +127,6 @@ export async function sendBriefReport(input: {
 
   const resend = new Resend(key);
   const from = fromAddress();
-  const notify = notifyAddress();
 
   const primary = await resend.emails.send({
     from,
@@ -131,34 +134,14 @@ export async function sendBriefReport(input: {
     subject: mail.subject,
     html: mail.html,
     text: mail.text,
+    attachments: [{ filename: `secondlook-${input.check.id.slice(-8)}.pdf`, content: Buffer.from(briefPdf(input.check)) }],
   });
-
-  let copiedToNotify = false;
-  let copyError: string | undefined;
-  const shouldCopy =
-    (isDemoInbox(input.to) || Boolean(primary.error)) &&
-    notify.toLowerCase() !== input.to.toLowerCase();
-
-  if (shouldCopy) {
-    const copySubject = isDemoInbox(input.to)
-      ? `${mail.subject} · demo ${input.to}`
-      : `${mail.subject} · undelivered ${input.to}`;
-    const copy = await resend.emails.send({
-      from,
-      to: notify,
-      subject: copySubject,
-      html: mail.html,
-      text: mail.text,
-    });
-    copiedToNotify = !copy.error;
-    copyError = copy.error?.message;
-  }
 
   return {
     sent: !primary.error,
-    copiedToNotify,
+    copiedToNotify: false,
     to: input.to,
-    error: primary.error?.message || copyError,
+    error: primary.error?.message,
   };
 }
 

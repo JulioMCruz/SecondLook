@@ -276,3 +276,29 @@ export async function saveContact(row: {
   store.db.exec(CONTACTS_DDL);
   store.db.prepare(sql).run(row.id, row.name, row.email, row.message, row.createdAt);
 }
+
+export async function consumeRateLimit(key: string, limit: number, windowMs: number) {
+  const store = await getStore();
+  const ddl = `CREATE TABLE IF NOT EXISTS rate_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires_at INTEGER NOT NULL)`;
+  await store.db.exec(ddl);
+  const now = Date.now();
+  const sql = `INSERT INTO rate_limits (key,count,expires_at) VALUES (?,1,?) ON CONFLICT(key) DO UPDATE SET count=CASE WHEN expires_at<=? THEN 1 ELSE count+1 END, expires_at=CASE WHEN expires_at<=? THEN excluded.expires_at ELSE expires_at END RETURNING count`;
+  const args = [key, now + windowMs, now, now];
+  const row = store.kind === "d1" ? await store.db.prepare(sql).bind(...args).first<{count:number}>() : store.db.prepare(sql).get(...args) as {count:number};
+  return (row?.count ?? limit + 1) <= limit;
+}
+
+export async function acquireCheckLock(id: string) {
+  const store = await getStore();
+  await store.db.exec(`CREATE TABLE IF NOT EXISTS check_locks (id TEXT PRIMARY KEY, expires_at INTEGER NOT NULL)`);
+  const now = Date.now();
+  const sql = `INSERT INTO check_locks (id,expires_at) VALUES (?,?) ON CONFLICT(id) DO UPDATE SET expires_at=excluded.expires_at WHERE expires_at<? RETURNING id`;
+  const row = store.kind === "d1" ? await store.db.prepare(sql).bind(id,now+180000,now).first() : store.db.prepare(sql).get(id,now+180000,now);
+  return Boolean(row);
+}
+
+export async function releaseCheckLock(id: string) {
+  const store = await getStore();
+  const sql = `DELETE FROM check_locks WHERE id=?`;
+  if(store.kind === "d1") await store.db.prepare(sql).bind(id).run(); else store.db.prepare(sql).run(id);
+}

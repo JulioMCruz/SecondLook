@@ -66,15 +66,13 @@ export default function ProcessWalkthrough() {
 
   useEffect(() => {
     if (reducedMotion()) {
-      setTick(6);
-      setReady(true);
-      return;
+      const timer = window.setTimeout(() => { setTick(6); setReady(true); }, 0);
+      return () => clearTimeout(timer);
     }
-    setTick(0);
-    setReady(true);
+    const reset = window.setTimeout(() => { setTick(0); setReady(true); }, 0);
     const delays = [800, 1800, 2800, 4000, 5200, 6400];
     const timers = delays.map((ms, i) => window.setTimeout(() => setTick(i + 1), ms));
-    return () => timers.forEach(clearTimeout);
+    return () => { clearTimeout(reset); timers.forEach(clearTimeout); };
   }, []);
 
   const { phases, caption } = phasesForTick(tick);

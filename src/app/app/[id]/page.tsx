@@ -1,5 +1,8 @@
 "use client";
 
+import BriefPreview from "@/components/BriefPreview";
+import { briefText } from "@/lib/brief-export";
+import EvidenceReport from "@/components/EvidenceReport";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -7,22 +10,28 @@ import { useT } from "@/components/LocaleProvider";
 import type { CheckRecord } from "@/lib/types";
 
 export default function BriefPage() {
-  const { t } = useT();
+  const { t, locale } = useT();
+  const es = locale === "es";
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const [check, setCheck] = useState<CheckRecord | null>(null);
+  const [demoSession,setDemoSession] = useState(false);
   const [copied, setCopied] = useState(false);
   const [emailing, setEmailing] = useState(false);
+  const [loadError, setLoadError] = useState("");
   const [emailFlash, setEmailFlash] = useState("");
 
   useEffect(() => {
-    fetch("/api/auth/me").then((r) => {
-      if (!r.ok) router.push("/login");
-    });
+    fetch("/api/auth/me").then(async r => {
+      if (!r.ok) {router.push("/login");return;}
+      const d=await r.json();setDemoSession(d.user?.email?.endsWith("@secondlook.app") || false);
+    }).catch(()=>setLoadError("Connection failed. Reload to retry."));
     fetch(`/api/checks/${params.id}`)
-      .then((r) => r.json())
-      .then((d) => setCheck(d.check || null));
+      .then(async r => {const d=await r.json();if(!r.ok)throw Error(d.error||"Could not load assessment");return d;})
+      .then((d) => setCheck(d.check || null)).catch(e=>setLoadError(e.message));
   }, [params.id, router]);
+
+  if (loadError) return <main className="mx-auto max-w-3xl p-8"><p role="alert">{loadError}</p><Link href="/app" className="mt-4 inline-block underline">{t.backReceipts}</Link></main>;
 
   if (!check) {
     return <main className="px-6 py-10 text-sm text-[var(--muted)]">{t.loading}</main>;
@@ -32,11 +41,8 @@ export default function BriefPage() {
   const locked = !brief || check.payload.entitlementActive === false;
 
   async function copy() {
-    if (!check || !brief) return;
-    await navigator.clipboard.writeText(
-      `${check.claim}\n\n${brief.verdict}\n${brief.summary}\n`,
-    );
-    setCopied(true);
+    if (!check || !brief || locked) return;
+    try { await navigator.clipboard.writeText(briefText(check)); setCopied(true); } catch { setEmailFlash(es?"No se pudo copiar. Puedes descargar el informe.":"Copy failed. You can download the brief."); }
     setTimeout(() => setCopied(false), 1500);
   }
 
@@ -44,48 +50,51 @@ export default function BriefPage() {
     if (!check) return;
     setEmailing(true);
     setEmailFlash("");
-    const res = await fetch(`/api/checks/${check.id}/email`, { method: "POST" });
-    const data = await res.json();
-    setEmailing(false);
-    if (data.check) setCheck(data.check);
-    if (data.emailed?.sent || data.emailed?.copiedToNotify) {
+    try {
+      const res = await fetch(`/api/checks/${check.id}/email`, { method: "POST" });
+      const data = await res.json();
+      if (data.check) setCheck(data.check);
+      if (!res.ok || !data.emailed?.sent) throw Error(data.error || data.emailed?.error || t.emailFail);
       setEmailFlash(t.emailedJustNow);
-      setTimeout(() => setEmailFlash(""), 2000);
-    }
+    } catch(e) {setEmailFlash(e instanceof Error?e.message:t.emailFail);} finally {setEmailing(false);}
+  }
+
+  function download() {
+    if(!check || locked)return;
+    const url=URL.createObjectURL(new Blob([briefText(check)],{type:"text/markdown;charset=utf-8"}));
+    const link=document.createElement("a");link.href=url;link.download=`secondlook-${check.id.slice(-8)}.md`;link.click();URL.revokeObjectURL(url);
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-8">
-      <div className="no-print mb-6 flex items-center justify-between">
+    <main className="mx-auto w-full max-w-5xl px-6 py-8">
+      <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link href="/app" className="text-sm text-[var(--muted)]">
           {t.backReceipts}
         </Link>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <button disabled={locked} onClick={download} className="rounded-full border border-[var(--line)] px-4 py-2 text-sm disabled:opacity-50">{es?"Descargar informe":"Download brief"}</button>
           <button
+            disabled={locked}
             onClick={copy}
             className="rounded-full border border-[var(--line)] px-4 py-2 text-sm"
           >
             {copied ? t.copied : t.copy}
           </button>
-          <button
-            onClick={() => window.print()}
-            className="rounded-full bg-[var(--green)] px-4 py-2 text-sm font-medium text-white"
-          >
-            {t.pdf}
-          </button>
+          {!locked && <BriefPreview check={check} demo={demoSession}/>}
         </div>
       </div>
 
       <p className="text-xs uppercase tracking-wider text-[var(--muted)]">{t.savedBrief}</p>
       <h1 className="mt-2 text-2xl font-semibold tracking-tight">{check.claim}</h1>
 
+      {!locked && brief?.findings ? <div className="mt-6"><EvidenceReport check={check}/></div> : null}
       {locked ? (
         <p className="mt-6 rounded-xl border border-[var(--line)] bg-white p-4 text-sm">
-          {t.briefHidden}
+          {t.briefHidden} <Link href={`/app/new?id=${check.id}`} className="ml-2 underline">{es?"Revisar acceso":"Review access"}</Link>
         </p>
       ) : (
         <article className="mt-6 space-y-5 rounded-2xl border border-[var(--line)] bg-white p-6">
-          <p className="text-sm font-semibold uppercase tracking-wider text-[var(--green)]">
+          {!brief.findings && <><p className="text-sm font-semibold uppercase tracking-wider text-[var(--green)]">
             {brief.verdict === "Fact"
               ? t.fact
               : brief.verdict === "Hypothesis"
@@ -139,7 +148,8 @@ export default function BriefPage() {
             </p>
           ) : null}
 
-          <div className="no-print rounded-xl border border-[var(--line)] bg-[var(--paper,#f7f4ee)] px-4 py-3 text-sm">
+          </>}
+          {demoSession ? <div className="no-print rounded-xl bg-[#f2f6f1] p-4 text-sm">{es?"Sesión de demostración: descarga una copia del informe antes de salir.":"Demo session: download a copy of the brief before signing out."}</div> : <div className="no-print rounded-xl border border-[var(--line)] bg-[var(--paper,#f7f4ee)] px-4 py-3 text-sm">
             {check.payload.reportEmailedAt ? (
               <p>
                 {t.emailed} {check.payload.reportEmailedTo}
@@ -153,14 +163,15 @@ export default function BriefPage() {
             {check.payload.reportEmailError && !check.payload.reportEmailedAt ? (
               <p className="mt-1 text-xs text-red-700">{check.payload.reportEmailError}</p>
             ) : null}
+            {emailFlash && <p role="status" className="mt-2 text-sm">{emailFlash}</p>}
             <button
               onClick={emailAgain}
               disabled={emailing}
               className="mt-3 rounded-full border border-[var(--line)] bg-white px-4 py-1.5 text-sm disabled:opacity-60"
             >
-              {emailing ? t.emailing : emailFlash || t.emailMe}
+              {emailing ? t.emailing : t.emailMe}
             </button>
-          </div>
+          </div>}
         </article>
       )}
 

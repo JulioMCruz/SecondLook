@@ -25,7 +25,8 @@
     "binding": "AI"
   },
   "vars": {
-    "EMAIL_FROM": "SecondLook <beth.t@example.com>",
+    "EMAIL_FROM": "SecondLook <onboarding@resend.dev>",
+    "NEXT_PUBLIC_REVENUECAT_TEST_STORE_API_KEY": "test_skNqdrTDWxZEahZsRBgcElpocUu",
     "CONTACT_NOTIFY_EMAIL": "julio.cruz@eb-ms.net"
   }
 }

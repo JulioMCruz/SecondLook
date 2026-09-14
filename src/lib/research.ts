@@ -1,6 +1,6 @@
 import type { CheckPayload, Gap, SearchPass } from "./types";
 import { runSearch } from "./linkup";
-import { writeBrief } from "./nebius";
+import { planResearch, writeBrief } from "./nebius";
 
 function host(url: string) {
   try {
@@ -56,10 +56,11 @@ export function findGap(claim: string, firstLook: SearchPass): Gap {
   };
 }
 
-export async function firstLook(claim: string) {
+export async function firstLook(claim: string, locale: "en" | "es" = "en") {
   const query = `Market claim to check for a small business owner: "${claim}". Find evidence for and against. Note geography, dates, and whether sources are vendors or operators.`;
   const pass = await runSearch(query, "standard");
-  const gap = findGap(claim, pass);
+  pass.sources = pass.sources.map((s, i) => ({...s, id: `F${i + 1}`}));
+  const gap = await planResearch(claim, pass, locale);
   return { pass, gap };
 }
 
@@ -68,17 +69,12 @@ export async function secondLook(claim: string, payload: CheckPayload) {
     throw new Error("first look missing");
   }
   const followUp = await runSearch(payload.gap.followUpQuery, "standard");
+  followUp.sources = followUp.sources.map((s, i) => ({...s, id: `S${i + 1}`}));
   const { brief, metrics } = await writeBrief({
+    locale: payload.locale,
     claim,
     firstLook: payload.firstLook,
     followUp,
   });
-  if (claim.trim().length < 24) {
-    brief.struggle = true;
-    brief.struggleNote =
-      brief.struggleNote ||
-      "Claim is too vague to close. This is the measured fail case.";
-    brief.verdict = "Unknown";
-  }
   return { followUp, brief, metrics };
 }

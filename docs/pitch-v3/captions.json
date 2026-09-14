@@ -1,0 +1,297 @@
+[
+  {
+    "start": 0.76,
+    "end": 5.735,
+    "text": "A salesperson says every competitor in Miami already uses AI to answer WhatsApp"
+  },
+  {
+    "start": 5.75,
+    "end": 6.965000000000001,
+    "text": "messages."
+  },
+  {
+    "start": 6.98,
+    "end": 9.424999999999999,
+    "text": "Should a small business buy the same tool?"
+  },
+  {
+    "start": 9.44,
+    "end": 11.885,
+    "text": "A confident pitch can create urgency."
+  },
+  {
+    "start": 11.9,
+    "end": 13.825,
+    "text": "It does not establish proof."
+  },
+  {
+    "start": 13.84,
+    "end": 19.48,
+    "text": "SecondLook helps an owner investigate that claim before committing time and money."
+  },
+  {
+    "start": 19.52,
+    "end": 20.86,
+    "text": "Here is the working product."
+  },
+  {
+    "start": 20.88,
+    "end": 23.345,
+    "text": "Start with a claim in English or Spanish."
+  },
+  {
+    "start": 23.36,
+    "end": 26.865,
+    "text": "Add the company, location, or timeframe when you know them."
+  },
+  {
+    "start": 26.88,
+    "end": 30.825,
+    "text": "The first assessment is free, and judges can enter through Try the demo without"
+  },
+  {
+    "start": 30.84,
+    "end": 32.425,
+    "text": "waiting for an email code."
+  },
+  {
+    "start": 32.44,
+    "end": 36.425,
+    "text": "Linkup searches the live web and saves the retrieved sources."
+  },
+  {
+    "start": 36.44,
+    "end": 40.745,
+    "text": "Nebius then identifies what the evidence does and does not establish."
+  },
+  {
+    "start": 40.76,
+    "end": 45.225,
+    "text": "In this example, finding tools that automate WhatsApp is not evidence that every"
+  },
+  {
+    "start": 45.24,
+    "end": 47.405,
+    "text": "Miami competitor uses one."
+  },
+  {
+    "start": 47.42,
+    "end": 49.905,
+    "text": "That distinction changes the next question."
+  },
+  {
+    "start": 49.92,
+    "end": 54.135,
+    "text": "Instead of repeating a broad search, SecondLook proposes a targeted follow-up around"
+  },
+  {
+    "start": 54.15,
+    "end": 55.745,
+    "text": "the missing proof."
+  },
+  {
+    "start": 55.76,
+    "end": 60.015,
+    "text": "The owner can inspect the first sources before deciding whether to unlock deeper"
+  },
+  {
+    "start": 60.03,
+    "end": 60.845,
+    "text": "research."
+  },
+  {
+    "start": 60.86,
+    "end": 65.835,
+    "text": "The value is a narrower, more useful investigation, with a record that stays attached"
+  },
+  {
+    "start": 65.85,
+    "end": 67.825,
+    "text": "to the original claim."
+  },
+  {
+    "start": 67.84,
+    "end": 69.985,
+    "text": "RevenueCat handles the test checkout."
+  },
+  {
+    "start": 70.0,
+    "end": 71.945,
+    "text": "First, a failed purchase:"
+  },
+  {
+    "start": 71.96,
+    "end": 76.105,
+    "text": "the free assessment stays intact and paid research remains locked."
+  },
+  {
+    "start": 76.12,
+    "end": 79.345,
+    "text": "Then, a valid test purchase unlocks the next step."
+  },
+  {
+    "start": 79.36,
+    "end": 81.905,
+    "text": "These are clearly labeled sandbox transactions."
+  },
+  {
+    "start": 81.92,
+    "end": 84.285,
+    "text": "No real money changes hands."
+  },
+  {
+    "start": 84.3,
+    "end": 89.075,
+    "text": "The backend verifies the entitlement before running paid research, opening the"
+  },
+  {
+    "start": 89.09,
+    "end": 91.765,
+    "text": "PDF, or sending an attachment."
+  },
+  {
+    "start": 91.78,
+    "end": 96.065,
+    "text": "Access is checked on the server, not inferred from a button in the browser."
+  },
+  {
+    "start": 96.08,
+    "end": 100.825,
+    "text": "Missing or expired access blocks paid operations while preserving the first look."
+  },
+  {
+    "start": 100.84,
+    "end": 104.465,
+    "text": "With access verified, Linkup performs the focused second search."
+  },
+  {
+    "start": 104.48,
+    "end": 106.715,
+    "text": "Nebius builds structured findings:"
+  },
+  {
+    "start": 106.73,
+    "end": 110.19,
+    "text": "supported, contradicted, or insufficient evidence."
+  },
+  {
+    "start": 110.32,
+    "end": 115.325,
+    "text": "Each finding connects to an exact passage from the retrieved material."
+  },
+  {
+    "start": 115.34,
+    "end": 118.755,
+    "text": "Open the source and inspect the words behind the conclusion."
+  },
+  {
+    "start": 118.77,
+    "end": 123.015,
+    "text": "A separate review checks whether the passages justify the inference and whether"
+  },
+  {
+    "start": 123.03,
+    "end": 126.505,
+    "text": "the proposed seller questions are useful."
+  },
+  {
+    "start": 126.52,
+    "end": 128.94500000000002,
+    "text": "Invalid citations cannot support a finding."
+  },
+  {
+    "start": 128.96,
+    "end": 133.125,
+    "text": "If the search adds no proof, the report keeps the uncertainty visible."
+  },
+  {
+    "start": 133.14,
+    "end": 136.78500000000003,
+    "text": "In this case, insufficient evidence is the honest result."
+  },
+  {
+    "start": 136.8,
+    "end": 139.205,
+    "text": "That result still helps the owner act."
+  },
+  {
+    "start": 139.22,
+    "end": 143.16500000000002,
+    "text": "The report explains the gap and prepares concrete questions for the seller."
+  },
+  {
+    "start": 143.18,
+    "end": 148.54500000000002,
+    "text": "The research record also exposes the model, latency, token usage, and estimated"
+  },
+  {
+    "start": 148.56,
+    "end": 149.22500000000002,
+    "text": "cost."
+  },
+  {
+    "start": 149.24,
+    "end": 153.50500000000002,
+    "text": "Four English and Spanish regression cases passed with valid citations;"
+  },
+  {
+    "start": 153.52,
+    "end": 157.34500000000003,
+    "text": "this is a small test set, not a claim of universal accuracy."
+  },
+  {
+    "start": 157.36,
+    "end": 161.22500000000002,
+    "text": "Finally, preview the generated evidence PDF."
+  },
+  {
+    "start": 161.24,
+    "end": 166.235,
+    "text": "Keep the claim, findings, source references, and next questions together in a document"
+  },
+  {
+    "start": 166.25,
+    "end": 168.705,
+    "text": "you can download and discuss."
+  },
+  {
+    "start": 168.72,
+    "end": 172.26500000000001,
+    "text": "Signed-in email users can also request the attachment."
+  },
+  {
+    "start": 172.28,
+    "end": 178.705,
+    "text": "The demo offers the PDF directly, so judges can inspect the deliverable immediately."
+  },
+  {
+    "start": 178.72,
+    "end": 183.405,
+    "text": "SecondLook brings live research, verified paid access, and evidence review into"
+  },
+  {
+    "start": 183.42,
+    "end": 185.305,
+    "text": "one decision workflow."
+  },
+  {
+    "start": 185.32,
+    "end": 187.865,
+    "text": "A free first look earns the next step."
+  },
+  {
+    "start": 187.88,
+    "end": 191.50500000000002,
+    "text": "A reusable brief carries the value beyond the screen."
+  },
+  {
+    "start": 191.52,
+    "end": 192.94500000000002,
+    "text": "Try the public app."
+  },
+  {
+    "start": 192.96,
+    "end": 194.66,
+    "text": "Before you buy, check the proof."
+  }
+]

@@ -25,13 +25,13 @@ export default function ProcessRail() {
 
   useEffect(() => {
     if (reduce) {
-      setTick(6);
-      return;
+      const timer = window.setTimeout(() => setTick(6), 0);
+      return () => clearTimeout(timer);
     }
-    setTick(0);
+    const reset = window.setTimeout(() => setTick(0), 0);
     const delays = [700, 1600, 2600, 4000, 5200, 6400];
     const timers = delays.map((ms, i) => window.setTimeout(() => setTick(i + 1), ms));
-    return () => timers.forEach(clearTimeout);
+    return () => { clearTimeout(reset); timers.forEach(clearTimeout); };
   }, [reduce]);
 
   const phases = phasesForTick(tick);

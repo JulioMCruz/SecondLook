@@ -1,152 +1,60 @@
 # SecondLook
 
-Say what they told you. Keep the report.
+**Before you buy, check the proof.**
 
-Live: [secondlook.juliomcruz.workers.dev](https://secondlook.juliomcruz.workers.dev)
+[Open the app](https://secondlook.juliomcruz.workers.dev) · [Watch the 60-second pitch](https://secondlook.juliomcruz.workers.dev/secondlook-pitch-v2.mp4) · [Try an isolated demo](https://secondlook.juliomcruz.workers.dev/login?demo=1)
 
-Personal product for **Burning Token (NERDCONF)**. UI in English and Spanish. One account, a folder of reports.
+SecondLook helps small business owners evaluate a sales claim before committing to a purchase. It searches the live web, identifies missing evidence, and turns a targeted follow-up into a saved brief with source passages and questions for the seller. English and Spanish.
 
-It is not a chatbot, not a software picker, and not an interview. It checks **one sentence someone tried to sell you** and stores the paper.
+## The product
 
-## What the user gets
+1. **Define the claim.** Paste or dictate what you were promised. The first assessment is free.
+2. **Investigate the evidence.** Linkup retrieves sources. Nebius identifies a specific gap and the next research question.
+3. **Prepare your response.** A RevenueCat Test Store purchase unlocks the follow-up and an evidence brief: supported, contradicted, or insufficient evidence. Inspect exact passages, copy questions, download Markdown, or preview and download an evidence PDF. Signed-in users can email the PDF as an attachment.
 
-You walk in with a sentence from a sales pitch. You walk out with a file on your account.
+For example, “All my competitors in Miami use AI on WhatsApp” requires a defined competitor set and adoption evidence. A vendor offering automation does not establish that claim. An unresolved finding is a useful result, with concrete proof to request next.
 
-| Always (free first look) | If you pay (second look) |
-|---|---|
-| The sentence, dated | A second live-web search aimed at what is missing |
-| Sources from a **live web** search | A written stamp: **Fact / Hypothesis / Unknown** |
-| What the pitch did not prove | Time and cost, plus the report **emailed** to you |
+## Sponsor integrations
 
-Fail or cancel the purchase: the paid steps stay locked. The first look remains yours.
-
-The product is **Your receipts** (`/app`) — the folder, not the chat.
-
-## How a check runs
-
-1. Sign in (email + 6-digit code) or **Try the demo**.
-2. Say or type the sentence on `/app/new`.
-3. **Free check:** live-web search → sources saved → what is missing, named. You already have a file.
-4. **Full report (pay):** second search → Fact / Hypothesis / Unknown → **email the report**. If pay fails, the free check stays yours.
-
-## Sponsors (cash tracks)
-
-One product, three load-bearing SDKs. Not three apps.
-
-| Track | Sponsor | Where it sits in the product |
+| Track | Integration | Role |
 |---|---|---|
-| Deep Research · **$500** | [Linkup](https://www.linkup.so/) | Search 1 (free) stores sources. Search 2 runs **only after** entitlement and is a **follow-up query built from those findings**. Sources stay in two groups on the brief. |
-| Applied AI · **$500** | [Nebius Token Factory](https://tokenfactory.nebius.com/) | Inference on the **main path** after unlock. Writes Fact / Hypothesis / Unknown from Linkup findings only (no extra browsing). Brief shows **time** and **cost**. |
-| Subscriptions · **$500** | [RevenueCat](https://www.revenuecat.com/) | Test Store. Entitlement `second_look` is the gate on nodes 03–05. Before: first look only. After: gap + follow-up + brief. **Simulate fail** keeps the lock. Expiry hides the paid brief; first look stays. |
+| Deep Research | Linkup | First live-web search and targeted second search; original sources remain attached to the assessment. |
+| Applied AI | Nebius Token Factory | Research planning, evidence synthesis and a separate inference review for supported/contradicted findings. Default model: `openai/gpt-oss-120b`. |
+| Subscriptions | RevenueCat | Test Store offering and purchase; `second_look` entitlement is verified server-side for the authenticated user. |
 
-Not a prize track, but used in prod:
+Cloudflare Workers/OpenNext hosts the app, D1 stores assessments, and Resend delivers OTP and report emails. Voice input uses a Cloudflare Whisper binding, followed by Nebius transcription cleanup.
 
-- **Cloudflare Workers + D1** — host, auth, checks, contact notes
-- **Resend** — login OTP, contact notes, and the **paid report** emailed after unlock (personal key; not a sponsor)
+## Trust and access
+
+- The model selects numbered passages. The server resolves the exact source text and rejects nonexistent citations.
+- Citation matching verifies the retrieved text, **not the truth of the source**. A separate model review checks whether a conclusion follows from the quoted evidence.
+- Paid data is removed from API responses when entitlement is absent, expired, or cannot be verified. Client assertions cannot grant access.
+- Failed/cancelled purchases preserve the free assessment. Duplicate unlock requests are guarded by a database lease.
+- Each demo session has an independent account. Signed-in users can only retrieve their own assessments.
+- OTP requests, verification attempts and report-email retries are limited. Reports are sent only to their intended recipient.
+
+## Judge walkthrough
+
+1. Select **Try the demo** and create an assessment using the Miami example.
+2. Inspect the evidence gap and the proposed follow-up query.
+3. Select **Test purchase**. In the RevenueCat modal, select **Test failed purchase**; the free assessment remains available.
+4. Retry, then select **Test valid purchase**. The server verifies the same user's entitlement and generates the brief.
+5. Inspect source passages and missing proof. Copy the seller questions or open the full brief to download it.
+6. Reload to confirm the saved assessment remains available. A different demo session starts with its own empty workspace.
+
+**All checkout transactions are RevenueCat Test Store transactions. No real charge or revenue.** The RevenueCat track explicitly accepts sandbox/test purchases. The demo mailbox is intentionally fictional; download its brief before signing out. Email sign-in and delivery use the configured Resend sender; the current onboarding sender is restricted to the account's permitted test recipient.
 
 ## Architecture
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "ui-sans-serif, system-ui", "primaryTextColor": "#1a1a1a", "lineColor": "#1f6b4a", "clusterBkg": "#f7f4ee", "clusterBorder": "#d9d2c5"}}}%%
-flowchart TB
-  classDef paper fill:#f7f4ee,stroke:#d9d2c5,color:#1a1a1a
-  classDef cream fill:#fffdf8,stroke:#d9d2c5,color:#1a1a1a
-  classDef green fill:#1f6b4a,stroke:#163d2c,color:#fffdf8
-  classDef mint fill:#e8f2ed,stroke:#1f6b4a,color:#1a1a1a
-  classDef link fill:#1b6b8a,stroke:#0e3d4f,color:#fffdf8
-  classDef neb fill:#2f4a8a,stroke:#1a2c5c,color:#fffdf8
-  classDef paid fill:#c45c26,stroke:#8a3d14,color:#fffdf8
-  classDef mail fill:#6b6560,stroke:#3f3b38,color:#f7f4ee
-
-  subgraph Client["Client"]
-    Browser["Browser<br/>landing · login · canvas"]
-    RCJS["RevenueCat JS<br/>Test Store"]
-  end
-
-  subgraph Worker["Cloudflare Worker · OpenNext"]
-    API["App Router APIs"]
-    D1[("D1<br/>users · otps<br/>checks · contacts")]
-  end
-
-  subgraph Tracks["Cash tracks"]
-    Linkup["Linkup<br/>live web search"]
-    Nebius["Nebius Token Factory<br/>Fact / Hypothesis / Unknown"]
-    RCAPI["RevenueCat<br/>entitlement second_look"]
-  end
-
-  Resend["Resend<br/>OTP · contact"]
-
-  Browser -->|HTTPS| API
-  Browser -->|purchase| RCJS
-  RCJS --> RCAPI
-  API -->|read / write| D1
-  API -->|"1 free · 2 after pay"| Linkup
-  API -->|after unlock| Nebius
-  API -->|check entitlement| RCAPI
-  API --> Resend
-
-  class Browser,RCJS paper
-  class API green
-  class D1 cream
-  class Linkup link
-  class Nebius neb
-  class RCAPI paid
-  class Resend mail
-```
-
-Color key: paper client · green APIs · teal Linkup · indigo Nebius · orange RevenueCat · grey Resend.
-
-Request map:
-
-| Route | Job |
-|---|---|
-| `POST /api/auth/otp` | Email a 6-digit code (Resend) |
-| `POST /api/auth/demo` | Judge demo session |
-| `POST /api/checks` | Create a check from the pasted claim |
-| `POST /api/checks/:id/first-look` | Linkup search 1 + save findings + gap |
-| `POST /api/checks/:id/unlock` | Verify `second_look` → Linkup search 2 → Nebius brief |
-| `POST /api/contact` | Store note in D1; notify Julio; autoresponder |
-
-## User sequence
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "ui-sans-serif, system-ui", "actorBkg": "#1f6b4a", "actorTextColor": "#fffdf8", "actorBorder": "#163d2c", "actorLineColor": "#1f6b4a", "signalColor": "#1a1a1a", "signalTextColor": "#1a1a1a", "noteBkgColor": "#fffdf8", "noteTextColor": "#1a1a1a", "noteBorderColor": "#d9d2c5", "activationBkgColor": "#e8f2ed", "sequenceNumberColor": "#fffdf8"}}}%%
-sequenceDiagram
-  autonumber
-  actor U as Owner
-  participant Web as SecondLook
-  participant L as Linkup
-  participant RC as RevenueCat
-  participant N as Nebius
-  participant DB as D1
-
-  rect rgb(232, 242, 237)
-    Note over U,DB: Free — first look
-    U->>Web: Sign in (OTP or demo)
-    U->>Web: Paste claim on /app/new
-    Web->>DB: Insert check
-    Web->>L: Search 1 (live web)
-    L-->>Web: Sources
-    Web->>DB: Save findings + named gap
-    Web-->>U: Canvas: 01–02 done · 03–05 locked
-  end
-
-  rect rgb(255, 243, 232)
-    Note over U,N: Paid — second look (entitlement second_look)
-    U->>RC: Test Store purchase
-    alt Success
-      RC-->>Web: entitled = true
-      Web->>L: Search 2 (from the gap)
-      L-->>Web: Counter-evidence
-      Web->>N: Write brief from findings only
-      N-->>Web: Fact / Hypothesis / Unknown + time/cost
-      Web->>DB: Save brief
-      Web-->>U: Open /app/[id] in Your receipts
-    else Fail / cancel
-      RC-->>Web: purchaseStatus = fail
-      Web-->>U: Lock stays dashed · first look remains
-    end
-  end
+flowchart LR
+  UI[Evidence workspace] --> API[Authenticated Next.js APIs]
+  UI --> RC[RevenueCat Test Store]
+  API --> RC
+  API --> D1[(Cloudflare D1)]
+  API --> L[Linkup searches]
+  API --> N[Nebius planning and evidence review]
+  API --> E[Resend OTP and report email]
 ```
 
 ## Run locally
@@ -154,41 +62,32 @@ sequenceDiagram
 ```bash
 npm install
 cp .env.example .env.local
-# LINKUP_API_KEY, NEBIUS_API_KEY,
-# NEXT_PUBLIC_REVENUECAT_TEST_STORE_API_KEY, AUTH_SECRET
+# Fill AUTH_SECRET, LINKUP_API_KEY, NEBIUS_API_KEY,
+# NEXT_PUBLIC_REVENUECAT_TEST_STORE_API_KEY and RESEND_API_KEY.
+npm run db:local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) → **Try with demo**.
+Use the public Test Store SDK key from the **same RevenueCat project** as the `second_look` entitlement and offering. It is public by design and is also used for read-only subscriber verification. Secret API keys are not needed by this implementation. Never commit private provider keys or `.env` files.
 
-## Env
+## Validation
 
-See `.env.example`.
+```bash
+npm test
+npm run lint
+npx tsc --noEmit
+BASE_URL=http://localhost:3000 npm run test:smoke
+npm run evaluate
+# Reuse saved source material, with fresh model calls:
+REPLAY=1 npm run evaluate
+```
 
-- `NEXT_PUBLIC_REVENUECAT_TEST_STORE_API_KEY` — public Test Store key in the browser (`test_` / `rcb_`)
-- `REVENUECAT_SECRET_API_KEY` — server only (`sk_`)
-- `NEBIUS_MODEL` — Token Factory id (default `openai/gpt-oss-120b`)
-- `RESEND_API_KEY` / `EMAIL_FROM` — OTP and contact mail
-- `CONTACT_NOTIFY_EMAIL` — landing form notify (default Julio)
+Smoke tests create isolated demo records and call real providers; `BASE_URL` is mandatory. The four-case EN/ES evaluation checks corporate ownership and undefined universal adoption. It is a small regression set, **not a general accuracy benchmark**. See [evaluation](evaluation/README.md), [UX notes](docs/UX-SPRINT.md), and [pitch script](docs/PITCH-V2.md).
 
-Do not commit secrets.
-
-## Deploy
-
-Cloudflare Workers via OpenNext:
+## Deployment
 
 ```bash
 npm run deploy
 ```
 
-D1 database: `secondlook`. Schema in `schema.sql`.
-
-## Test purchase
-
-Personal RevenueCat project. **Test Store** API key. Entitlement id: `second_look`.
-
-| Path | What judges should see |
-|---|---|
-| Success | Nodes 03–05 mount; brief saved |
-| Simulate fail | Nodes stay dashed; first look kept |
-| Expiry | Paid brief hidden; first look remains |
+The D1 schema is in `schema.sql`. Rate-limit and processing-lease tables are created lazily. This hackathon build demonstrates a professional evidence workflow; it does not claim SSO, enterprise roles, compliance certification, or an SLA.

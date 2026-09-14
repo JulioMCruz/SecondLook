@@ -1,0 +1,14 @@
+{
+  "provider": "ElevenLabs",
+  "voice": "Tommy",
+  "model": "Eleven Multilingual v2",
+  "generatedAt": "2026-09-13T22:44:49Z",
+  "originalFile": "ElevenLabs_2026-09-13T22_44_49_Tommy_pvc_sp100_s50_sb75_se30_b_m2.mp3",
+  "creditsShown": 795,
+  "tempo": 0.92,
+  "silenceInsert": {
+    "originalSeconds": 48,
+    "durationSeconds": 2
+  },
+  "captionAlignment": "Whisper base.en word timestamps; manually corrected spelling from source script"
+}

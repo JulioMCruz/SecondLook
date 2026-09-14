@@ -19,6 +19,7 @@ function LoginForm() {
     e.preventDefault();
     setBusy(true);
     setError("");
+    try {
     const res = await fetch("/api/auth/otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -32,12 +33,14 @@ function LoginForm() {
     }
     if (data.devCode) setDevCode(data.devCode);
     setStage("code");
+    } catch { setError(t.sendCodeFail); } finally {setBusy(false);}
   }
 
   async function verify(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError("");
+    try {
     const res = await fetch("/api/auth/otp", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -50,11 +53,13 @@ function LoginForm() {
       return;
     }
     router.push("/app");
+    } catch { setError(t.demoFail); } finally {setBusy(false);}
   }
 
   async function demo() {
     setBusy(true);
     setError("");
+    try {
     const res = await fetch("/api/auth/demo", { method: "POST" });
     setBusy(false);
     if (!res.ok) {
@@ -62,11 +67,13 @@ function LoginForm() {
       return;
     }
     router.push("/app");
+    } catch { setError(t.demoFail); } finally {setBusy(false);}
   }
 
   useEffect(() => {
     if (params.get("demo") === "1") {
-      void demo();
+      const timer = window.setTimeout(() => void demo(), 0);
+      return () => window.clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -86,6 +93,8 @@ function LoginForm() {
       {stage === "email" ? (
         <form onSubmit={requestCode} className="mt-8 space-y-4">
           <input
+            aria-label="Email"
+            autoComplete="email"
             type="email"
             required
             value={email}
@@ -103,6 +112,10 @@ function LoginForm() {
       ) : (
         <form onSubmit={verify} className="mt-8 space-y-4">
           <input
+            aria-label={t.checkEmail}
+            autoComplete="one-time-code"
+            required
+            minLength={6}
             inputMode="numeric"
             pattern="[0-9]*"
             maxLength={6}
@@ -134,7 +147,7 @@ function LoginForm() {
       >
         {t.tryDemo}
       </button>
-      {error ? <p className="mt-4 text-sm text-red-700">{error}</p> : null}
+      {error ? <p role="alert" className="mt-4 text-sm text-red-700">{error}</p> : null}
     </main>
   );
 }

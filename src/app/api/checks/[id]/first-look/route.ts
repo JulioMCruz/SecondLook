@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCheck, updateCheck } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
+import { visibleCheck } from "@/lib/entitlements";
 import { firstLook } from "@/lib/research";
 
 export const maxDuration = 120;
@@ -14,8 +15,9 @@ export async function POST(
   const { id } = await ctx.params;
   const check = await getCheck(id, user.id);
   if (!check) return NextResponse.json({ error: "not found" }, { status: 404 });
+  if (check.payload.firstLook) return NextResponse.json({ check: await visibleCheck(check) });
   try {
-    const { pass, gap } = await firstLook(check.claim);
+    const { pass, gap } = await firstLook(check.claim, check.payload.locale);
     check.payload.firstLook = pass;
     check.payload.gap = gap;
     check.status = "first_look";

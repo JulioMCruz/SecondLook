@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-const BASE = process.env.BASE_URL || "https://secondlook.juliomcruz.workers.dev";
+if (!process.env.BASE_URL) throw new Error("Set BASE_URL explicitly; smoke tests create records and call providers.");
+const BASE = process.env.BASE_URL;
 const CLAIM =
   process.env.TEST_CLAIM ||
   "All my competitors already answer WhatsApp with AI in Miami.";
@@ -43,7 +44,7 @@ async function api(path, opts = {}) {
   return { res, json };
 }
 
-test("health: all sponsor keys live", async () => {
+test("health: required provider credentials configured", async () => {
   const { res, json } = await api("/api/health");
   assert.equal(res.status, 200);
   assert.equal(json.product, "SecondLook");
@@ -66,19 +67,24 @@ test("checks require a session", async () => {
   assert.equal(json.error, "unauthorized");
 });
 
+test("PDF requires a session", async () => {
+  const { res } = await api("/api/checks/unknown/pdf");
+  assert.equal(res.status, 401);
+});
+
 test("demo login sets a session", async () => {
   const { res, json } = await api("/api/auth/demo", { method: "POST" });
   assert.equal(res.status, 200);
   assert.equal(json.ok, true);
   assert.ok(json.user?.id);
-  assert.equal(json.user.email, "judge@secondlook.app");
+  assert.match(json.user.email, /^demo-.*@secondlook\.app$/);
   assert.ok(cookies.has("sl_session"), "sl_session cookie");
 });
 
 test("me returns demo user", async () => {
   const { res, json } = await api("/api/auth/me");
   assert.equal(res.status, 200);
-  assert.equal(json.user.email, "judge@secondlook.app");
+  assert.match(json.user.email, /^demo-.*@secondlook\.app$/);
   assert.equal(json.keys.revenuecat, true);
 });
 
@@ -102,6 +108,11 @@ test("create a check", async () => {
   assert.equal(json.check.claim, CLAIM);
   checkId = json.check.id;
   assert.match(checkId, /^chk_/);
+});
+
+test("unpaid PDF is not disclosed", async () => {
+  const { res } = await api(`/api/checks/${checkId}/pdf`);
+  assert.equal(res.status, 402);
 });
 
 test("list includes the new check", async () => {
@@ -141,16 +152,15 @@ test("failed purchase stays locked", async () => {
   assert.equal(json.check.status, "first_look");
 });
 
-test("unlock with entitlement runs follow-up + Nebius brief", { timeout: 180_000 }, async () => {
-  const { res, json } = await api(`/api/checks/${checkId}/unlock`, {
-    method: "POST",
-    body: JSON.stringify({ entitled: true, purchaseStatus: "success" }),
-  });
-  assert.equal(res.status, 200, json.error);
-  assert.equal(json.check.status, "unlocked");
-  assert.equal(json.check.payload.entitlementActive, true);
-  assert.ok(json.check.payload.followUp?.sources, "second Linkup pass");
-  assert.ok(json.check.payload.brief?.verdict, "Nebius brief");
-  assert.ok(["Fact", "Hypothesis", "Unknown"].includes(json.check.payload.brief.verdict));
-  assert.ok(json.check.payload.metrics?.model, "Nebius metrics");
+test("client cannot self-grant entitlement", async () => {
+  const { res } = await api(`/api/checks/${checkId}/unlock`, {method: "POST",body: JSON.stringify({entitled:true,purchaseStatus:"success"})});
+  assert.equal(res.status,402,"An unpurchased test user must not unlock by asserting entitlement");
+});
+
+test("separate demo users cannot read each other's assessments", async () => {
+  await api("/api/auth/demo", {method:"POST"});
+  const detail=await api(`/api/checks/${checkId}`);
+  assert.equal(detail.res.status,404);
+  const listing=await api('/api/checks');
+  assert.ok(!listing.json.checks.some(c=>c.id===checkId));
 });
