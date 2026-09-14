@@ -1,0 +1,91 @@
+{
+  "ok": true,
+  "strict": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "duration": 198,
+    "samples": [
+      4.95,
+      14.85,
+      24.75,
+      34.65,
+      44.55,
+      54.45,
+      64.35,
+      74.25,
+      84.15,
+      94.05,
+      103.95,
+      113.85,
+      123.75,
+      133.65,
+      143.55,
+      153.45,
+      163.35,
+      173.25,
+      183.15,
+      193.05
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 0,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "samples": [
+      4.95,
+      44.55,
+      94.05,
+      143.55,
+      193.05
+    ],
+    "checked": 59,
+    "passed": 59
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  },
+  "_meta": {
+    "version": "0.8.37",
+    "latestVersion": "0.8.37",
+    "updateAvailable": false
+  }
+}

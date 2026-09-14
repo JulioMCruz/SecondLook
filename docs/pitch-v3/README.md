@@ -8,4 +8,4 @@ Render: `npm run render -- --quality high --resolution 4k --crf 16 --fps 30 --wo
 
 Official participation rules reviewed: https://app.burningtoken.dev/rules. They do not prescribe 2–4 minutes. The extended length follows the user’s preference and allows meaningful integration evidence.
 
-YouTube URL and final quality verification: pending export/upload. Keep submission as a draft until explicitly submitted.
+Published PUBLIC: https://youtu.be/rt0JESuXu0k . YouTube playback verified at 3:18 with 2160p (4K) available. Final file: secondlook-pitch-v3-4k-final.mp4 (29,041,250 bytes). Narration normalized with FFmpeg loudnorm target -16 LUFS / -1.5 dBTP / LRA 11; normalized M4A is included and referenced by the composition. Captions are burned in; no separate authored subtitle track was uploaded. Submission link and sponsor timestamps updated and saved as a draft; final Submit remains outstanding.

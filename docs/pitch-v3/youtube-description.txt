@@ -1,0 +1,23 @@
+Turn a sales claim into a cited evidence brief before you buy.
+
+Try SecondLook: https://secondlook.juliomcruz.workers.dev
+Choose Try the demo. No email verification required for judges.
+
+00:00 The business problem
+00:19 A free first assessment
+00:32 Linkup search and the evidence gap
+00:49 A targeted next research question
+01:07 RevenueCat failed and valid test purchases
+01:24 Server-verified access
+01:40 Nebius findings and exact source passages
+01:58 Independent review and honest uncertainty
+02:16 Seller questions and research metrics
+02:37 Preview the generated evidence PDF
+02:58 Before you buy, check the proof
+
+Linkup performs live-web research. Nebius Token Factory plans the follow-up and reviews evidence-backed findings. RevenueCat Web SDK and Test Store verify access to paid research and the evidence PDF. Test purchases make no real charge.
+
+This extended demo uses edited captures of the working public app, English captions, and ElevenLabs Tommy AI narration. The final PDF is generated from the assessment shown. Four English/Spanish regression cases passed with valid citations; this is a small test set, not a universal accuracy benchmark.
+
+Built by Julio Cruz for Burning Token 2026.
+Code: https://github.com/JulioMCruz/SecondLook/tree/codex/secondlook-evidence-sprint
