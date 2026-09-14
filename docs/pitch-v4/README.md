@@ -11,3 +11,12 @@ Run `node scripts/export-pitch-pdf.mjs` from the app root. The same `briefPdf` g
 11 application tests pass. TypeScript and production build passed for the PDF change. HyperFrames 0.8.37 check reports zero errors or warnings, with 65/65 contrast checks passing. Seven key frames were visually reviewed, including all three PDF pages. Narration uses Multilingual v2, speed 1, stability 50, similarity 75, style 0 and speaker boost. Audio is normalized to -16 LUFS with a -1.5 dBTP target. Captions are aligned to the new recording.
 
 Rebuild: `python3 build_v4.py`. Render: `npm run render -- --quality high --resolution 4k --crf 16 --fps 30 --workers 4 --output secondlook-pitch-v4-4k-final.mp4`.
+
+## Published delivery
+
+- Public YouTube: https://youtu.be/DPstAoHE2j8
+- Production: https://secondlook.juliomcruz.workers.dev
+- Cloudflare version: 455ce1f6-9c07-4408-82be-c29f7eab1c1a
+- PR #2 merged into the evidence sprint; PR #1 then merged into main.
+- Hackathon form saved and UPDATE SUBMISSION completed. UI confirmed Submitted for judging / Saved version. Sponsor timestamps updated for v4; concise AI-build disclosure preserved.
+- Export verified: H.264 + AAC, 3840x2160, 30 fps, 196 seconds, 29,349,588 bytes.

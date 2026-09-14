@@ -91,3 +91,7 @@ npm run deploy
 ```
 
 The D1 schema is in `schema.sql`. Rate-limit and processing-lease tables are created lazily. This hackathon build demonstrates a professional evidence workflow; it does not claim SSO, enterprise roles, compliance certification, or an SLA.
+
+## Final hackathon demo
+
+[Watch the public 4K demo](https://youtu.be/DPstAoHE2j8). Updated narration and a three-page English evidence PDF preview. [Build and validation notes](docs/pitch-v4/README.md).
