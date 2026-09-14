@@ -1,0 +1,82 @@
+{
+  "id": "chk_c6cd283b-e368-45ec-8711-c61d4c5dd055",
+  "userId": "exported-demo-fixture",
+  "claim": "All my competitors in Miami already use AI to answer WhatsApp messages.",
+  "status": "unlocked",
+  "createdAt": "2026-09-13",
+  "updatedAt": "2026-09-13",
+  "payload": {
+    "claim": "All my competitors in Miami already use AI to answer WhatsApp messages.",
+    "locale": "en",
+    "brief": {
+      "locale": "en",
+      "verdict": "Unknown",
+      "facts": [],
+      "hypotheses": [],
+      "unknowns": [],
+      "where": [],
+      "struggle": true,
+      "summary": "The claim that every competitor in Miami already uses AI to answer WhatsApp messages cannot be verified with the provided sources. While several vendor pages describe AI WhatsApp solutions being offered to Miami businesses and note that many local firms have adopted such tools, none supply independent data confirming universal adoption across all competitors.",
+      "findings": [
+        {
+          "claim": "All my competitors in Miami already use AI to answer WhatsApp messages.",
+          "status": "insufficient",
+          "explanation": "The sources describe AI WhatsApp services being marketed to Miami businesses and cite examples of many local firms using them, but they do not provide independent, comprehensive data showing that every competitor in the market has adopted AI for WhatsApp. The evidence is vendor-centric and lacks coverage of the entire competitor set, so the claim remains unsubstantiated.",
+          "evidence": [
+            {
+              "sourceId": "F1",
+              "excerpt": "Replies to every WhatsApp Business message in \\~2 seconds - in English or Spanish, detected automatically.",
+              "relation": "context"
+            },
+            {
+              "sourceId": "F5",
+              "excerpt": "Why Miami Businesses Choose AI WhatsApp Agents",
+              "relation": "context"
+            },
+            {
+              "sourceId": "F9",
+              "excerpt": "The playbook is proven at scale, with 500+ local businesses served in Miami already running on it.",
+              "relation": "context"
+            }
+          ],
+          "missingEvidence": [
+            "An independent survey or market study quantifying the percentage of Miami businesses that have deployed AI for WhatsApp messaging."
+          ]
+        }
+      ],
+      "whatChanged": "No new S-type sources were added or resolved; the follow-up query did not yield additional independent data.",
+      "questionsForSeller": [
+        "Can you provide an independent survey or study that quantifies the adoption rate of AI-powered WhatsApp responders among Miami competitors in my industry?",
+        "Do you have verifiable case studies or client lists that demonstrate every direct competitor in my market uses AI to answer WhatsApp messages?",
+        "What methodology, sample size, and date range were used for any data you cite about AI adoption in Miami businesses?"
+      ]
+    },
+    "firstLook": {
+      "query": "Not included in exported PDF",
+      "depth": "standard",
+      "startedAt": "2026-09-13",
+      "finishedAt": "2026-09-13",
+      "durationMs": 0,
+      "sources": [
+        {
+          "id": "F1",
+          "name": "AI Automation Services in Miami | Digismart - Free Consult",
+          "url": "https://digismart.io/ai-automation-services-in-miami/",
+          "snippet": "Replies to every WhatsApp Business message in \\~2 seconds - in English or Spanish, detected automatically."
+        },
+        {
+          "id": "F5",
+          "name": "WhatsApp Chatbot for Miami Businesses - Botline Blog",
+          "url": "https://botline.cc/blog/whatsapp-chatbot-miami-businesses",
+          "snippet": "Why Miami Businesses Choose AI WhatsApp Agents"
+        },
+        {
+          "id": "F9",
+          "name": "AI Marketing for Spas & Wellness in Miami | Prefero",
+          "url": "https://prefero.ai/spas-in/miami",
+          "snippet": "The playbook is proven at scale, with 500+ local businesses served in Miami already running on it."
+        }
+      ]
+    }
+  }
+}
